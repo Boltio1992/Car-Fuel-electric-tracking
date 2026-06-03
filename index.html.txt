@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BYD Sealion Log App</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3b74a3">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <style>
+        :root {
+            --primary-blue: #3b74a3; 
+            --mid-blue: #8eb3cf;
+            --light-bg: #f4f7f9;
+            --text-main: #ffffff;
+            --text-dark: #333333;
+            --text-gray: #666666;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-radius: 20px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        
+        body { 
+            background: linear-gradient(180deg, var(--primary-blue) 0%, var(--mid-blue) 35%, var(--light-bg) 70%, #ffffff 100%);
+            background-attachment: fixed;
+            color: var(--text-dark);
+            padding-bottom: 40px;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
+
+        .top-status { color: var(--text-main); margin-top: 10px; margin-bottom: 25px; }
+        .vehicle-name { font-size: 1.4rem; font-weight: 500; letter-spacing: 0.5px; margin-bottom: 15px; }
+        
+        .main-metrics { display: flex; align-items: baseline; gap: 15px; margin-bottom: 5px; }
+        .big-range { font-size: 3.2rem; font-weight: 600; line-height: 1; }
+        .big-range span { font-size: 1.2rem; font-weight: 400; margin-left: 2px; }
+        
+        .sub-metrics { display: flex; align-items: center; gap: 15px; font-size: 1.2rem; font-weight: 500; }
+        .sub-metrics div { display: flex; align-items: center; gap: 5px; }
+        .update-time { font-size: 0.85rem; font-weight: 600; margin-top: 12px; background: rgba(0,0,0,0.15); display: inline-block; padding: 4px 10px; border-radius: 12px;}
+
+        .glass-card { 
+            background: var(--card-bg); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+            border-radius: var(--card-radius); 
+            padding: 22px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.04); 
+            border: 1px solid rgba(255,255,255,0.5); 
+        }
+
+        .insights-panel { text-align: center; margin-bottom: 30px; }
+        .insights-title { font-size: 0.8rem; font-weight: 600; color: var(--text-gray); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .cost-per-km { font-size: 2.5rem; font-weight: 700; color: #1F4E78; line-height: 1; margin-bottom: 15px; }
+        .cost-per-km span { font-size: 1.1rem; color: var(--text-gray); font-weight: 500; }
+        
+        .insights-grid { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid rgba(0,0,0,0.06); padding-top: 15px; }
+        .insight-box { display: flex; flex-direction: column; align-items: center; }
+        .insight-val { font-size: 1.3rem; font-weight: 600; color: var(--text-dark); }
+        .insight-lbl { font-size: 0.7rem; color: var(--text-gray); text-transform: uppercase; margin-top: 2px; font-weight: 600;}
+
+        .quick-actions { display: flex; justify-content: space-between; padding: 0 10px; margin-bottom: 30px; }
+        .action-circle { width: 65px; height: 65px; background: #ffffff; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: none; cursor: pointer; transition: transform 0.2s; }
+        .action-circle:active { transform: scale(0.92); }
+        .action-icon { font-size: 1.5rem; margin-bottom: 2px; }
+        .action-label { font-size: 0.65rem; font-weight: 600; color: var(--text-gray); }
+
+        .card-header { font-size: 1rem; font-weight: 600; margin-bottom: 15px; color: var(--text-dark); display: flex; justify-content: space-between;}
+        
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .dash-item { display: flex; flex-direction: column; }
+        .dash-val { font-size: 1.3rem; font-weight: 700; color: #1F4E78; }
+        .dash-lbl { font-size: 0.75rem; color: var(--text-gray); font-weight: 600; text-transform: uppercase; margin-top: 2px; }
+
+        .split-bar-container { margin-top: 15px; background: #e0e5ec; height: 8px; border-radius: 4px; overflow: hidden; display: flex; }
+        .ev-bar { background: #1F4E78; height: 100%; transition: width 0.5s; }
+        .hev-bar { background: #4ca1af; height: 100%; transition: width 0.5s; }
+        .split-labels { display: flex; justify-content: space-between; font-size: 0.75rem; margin-top: 8px; font-weight: 600; color: var(--text-gray); }
+
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 1000; justify-content: center; align-items: flex-end; }
+        .drawer { background: #ffffff; width: 100%; max-width: 500px; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 24px; max-height: 85vh; overflow-y: auto; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        .drawer-handle { width: 40px; height: 5px; background: #ddd; border-radius: 3px; margin: 0 auto 20px auto; }
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .drawer-header h3 { font-size: 1.2rem; font-weight: 600; color: var(--text-dark); }
+        .close-btn { background: #f0f0f0; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; color: #555; cursor: pointer; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; color: var(--text-gray); }
+        input, select { width: 100%; padding: 14px; border: 1px solid #e0e0e0; border-radius: 12px; font-size: 1rem; background-color: #f9f9f9; color: var(--text-dark); transition: border-color 0.2s; }
+        input:focus, select:focus { outline: none; border-color: #1F4E78; background-color: #fff; }
+        
+        .btn-submit { width: 100%; padding: 16px; border: none; border-radius: 30px; font-size: 1rem; font-weight: 600; color: white; background-color: #1F4E78; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 10px rgba(31,78,120,0.3); }
+
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
+        th { padding: 10px 5px; border-bottom: 2px solid #eee; color: var(--text-gray); font-weight: 600; }
+        td { padding: 12px 5px; border-bottom: 1px solid #eee; }
+        .del-btn { color: #dc3545; font-weight: bold; cursor: pointer; padding: 5px; font-size: 1.1rem; }
+
+        /* Toast Notification */
+        .toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 30px; padding: 16px; position: fixed; z-index: 2000; left: 50%; bottom: 30px; font-size: 0.95rem; font-weight: 600; transform: translateX(-50%); opacity: 0; transition: opacity 0.3s, bottom 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="top-status">
+            <div class="vehicle-name">My SEALION 5 DM-i</div>
+            <div class="main-metrics">
+                <div class="big-range"><span id="currDist">0</span><span>km</span></div>
+                <div class="sub-metrics">
+                    <div>⚡ <span id="topSoc">--%</span></div>
+                    <div>💧 <span id="topFuel">--%</span></div>
+                </div>
+            </div>
+            <div class="update-time" id="dashMonthLabel">Current Month</div>
+        </div>
+
+        <div class="glass-card insights-panel">
+            <div class="insights-title">Operating Cost Efficiency</div>
+            <div class="cost-per-km" id="insightCostKm">$0.00<span> / km</span></div>
+            
+            <div class="insights-grid">
+                <div class="insight-box">
+                    <div class="insight-val" id="insightTrips">0 <span id="trendTrips"></span></div>
+                    <div class="insight-lbl">Total Trips</div>
+                </div>
+                <div class="insight-box">
+                    <div class="insight-val" id="insightEvents">0 <span id="trendEvents"></span></div>
+                    <div class="insight-lbl">Charge/Refuels</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <button class="action-circle" onclick="openDrawer('driveDrawer')">
+                <div class="action-icon">🚗</div><div class="action-label">Drive</div>
+            </button>
+            <button class="action-circle" onclick="openDrawer('energyDrawer'); document.getElementById('energyType').value='Charge'; toggleEnergyFields();">
+                <div class="action-icon">⚡</div><div class="action-label">Charge</div>
+            </button>
+            <button class="action-circle" onclick="openDrawer('energyDrawer'); document.getElementById('energyType').value='Refuel'; toggleEnergyFields();">
+                <div class="action-icon">⛽</div><div class="action-label">Refuel</div>
+            </button>
+            <button class="action-circle" onclick="openDrawer('ledgerDrawer'); renderLedger();">
+                <div class="action-icon">📋</div><div class="action-label">Ledger</div>
+            </button>
+        </div>
+
+        <div class="glass-card">
+            <div class="card-header">Monthly Energy Breakdown</div>
+            <div class="dash-grid">
+                <div class="dash-item"><span class="dash-val" id="statCost">$0.00 <span id="trendCost"></span></span><span class="dash-lbl">Total Spent</span></div>
+                <div class="dash-item"><span class="dash-val" id="statKwh">0.0 <span id="trendKwh"></span></span><span class="dash-lbl">kWh Charged</span></div>
+            </div>
+            <div class="split-bar-container">
+                <div id="evBar" class="ev-bar"></div>
+                <div id="hevBar" class="hev-bar"></div>
+            </div>
+            <div class="split-labels">
+                <span>EV: <span id="evPct">0</span>%</span>
+                <span>HEV: <span id="hevPct">0</span>%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Action Successful</div>
+
+
+    <!-- ======================= -->
+    <!-- SLIDING DRAWER OVERLAYS -->
+    <!-- ======================= -->
+
+    <!-- DRAWER: DRIVE -->
+    <div id="driveDrawer" class="overlay" onclick="closeDrawer(event, 'driveDrawer')">
+        <div class="drawer" onclick="event.stopPropagation()">
+            <div class="drawer-handle"></div>
+            <div class="drawer-header"><h3>Log Drive Trip</h3><button class="close-btn" onclick="document.getElementById('driveDrawer').style.display='none'">✕</button></div>
+            
+            <form id="driveForm">
+                <div class="form-row">
+                    <div class="form-group"><label>Date</label><input type="date" id="driveDate" required></div>
+                    <div class="form-group"><label>Mode</label><select id="driveMode" required><option value="EV Trip">EV Trip</option><option value="HEV Trip">HEV Trip</option></select></div>
+                </div>
+                <div class="form-group"><label>Route Name</label><input type="text" id="driveDesc" placeholder="e.g., Home to Office" required></div>
+                <div class="form-group"><label>Distance Driven (km)</label><input type="number" id="driveDist" step="0.1" required></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Start SoC %</label><input type="number" id="driveStartSoc" min="0" max="100"></div>
+                    <div class="form-group"><label>End SoC %</label><input type="number" id="driveEndSoc" min="0" max="100"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Start Fuel %</label><input type="number" id="driveStartFuel" min="0" max="100"></div>
+                    <div class="form-group"><label>End Fuel %</label><input type="number" id="driveEndFuel" min="0" max="100"></div>
+                </div>
+                <button type="submit" class="btn-submit">Save Drive</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DRAWER: ENERGY -->
+    <div id="energyDrawer" class="overlay" onclick="closeDrawer(event, 'energyDrawer')">
+        <div class="drawer" onclick="event.stopPropagation()">
+            <div class="drawer-handle"></div>
+            <div class="drawer-header"><h3>Log Energy Refill</h3><button class="close-btn" onclick="document.getElementById('energyDrawer').style.display='none'">✕</button></div>
+            
+            <form id="energyForm">
+                <div class="form-row">
+                    <div class="form-group"><label>Date</label><input type="date" id="energyDate" required></div>
+                    <div class="form-group"><label>Type</label><select id="energyType" required onchange="toggleEnergyFields()"><option value="Charge">Charge</option><option value="Refuel">Refuel</option></select></div>
+                </div>
+                <div class="form-group"><label>Station Name</label><input type="text" id="energyDesc" placeholder="e.g., Home Wallbox" required></div>
+                
+                <div id="chargeInputs">
+                    <div class="form-row">
+                        <div class="form-group"><label>Start SoC (%)</label><input type="number" id="chargeStart" min="0" max="100"></div>
+                        <div class="form-group"><label>End SoC (%)</label><input type="number" id="chargeEnd" min="0" max="100"></div>
+                    </div>
+                    
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:-10px; margin-bottom:10px;">
+                        <div class="form-group" style="margin:0; width:120px;">
+                            <label style="font-size:0.7rem;">Car Capacity (kWh)</label>
+                            <input type="number" id="batteryCap" value="18.3" step="0.1" style="padding:6px; font-size:0.9rem;">
+                        </div>
+                        <span style="font-size:0.8rem; color:#1F4E78; cursor:pointer; font-weight:700;" onclick="estimateKwh()">✨ Auto-Estimate kWh</span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group"><label>Charged (kWh)</label><input type="number" id="energyKwh" step="0.01" oninput="calcCost()"></div>
+                        <div class="form-group"><label>Rate (៛/kWh)</label><input type="number" id="rateElecInput" oninput="calcCost()"></div>
+                    </div>
+                </div>
+                
+                <div id="refuelInputs" style="display:none;">
+                    <div class="form-row">
+                        <div class="form-group"><label>Refueled (L)</label><input type="number" id="energyLiters" step="0.01" oninput="calcCost()"></div>
+                        <div class="form-group"><label>Rate (៛/L)</label><input type="number" id="rateFuelInput" oninput="calcCost()"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Total Expenditure</label>
+                    <div class="form-row">
+                        <input type="text" id="calcCostKHR" placeholder="0 ៛" readonly style="font-weight:bold; border:none; background:#f0f4f8;">
+                        <input type="text" id="calcCostUSD" placeholder="$0.00" readonly style="font-weight:bold; border:none; background:#f0f4f8;">
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit">Save Energy Log</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DRAWER: LEDGER & BACKUP -->
+    <div id="ledgerDrawer" class="overlay" onclick="closeDrawer(event, 'ledgerDrawer')">
+        <div class="drawer" onclick="event.stopPropagation()" style="max-height:90vh;">
+            <div class="drawer-handle"></div>
+            <div class="drawer-header"><h3>Master Ledger</h3><button class="close-btn" onclick="document.getElementById('ledgerDrawer').style.display='none'">✕</button></div>
+            
+            <div class="form-group">
+                <label>Filter by Month</label>
+                <input type="month" id="ledgerMonthFilter" onchange="renderLedger()" style="background: #eef2f5;">
+            </div>
+            
+            <div style="overflow-x:auto;">
+                <table id="ledgerTable">
+                    <thead><tr><th>Date</th><th>Type / Route</th><th>Metric</th><th>Cost</th><th></th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            
+            <button onclick="exportCSV()" class="btn-submit" style="background:#3b74a3; margin-top:20px;">Download Excel (CSV)</button>
+            
+            <!-- JSON Backup/Restore Area -->
+            <div class="form-row" style="margin-top:15px;">
+                <button onclick="backupData()" class="btn-submit" style="background:#555; margin-top:0;">Backup System Data</button>
+                <button onclick="document.getElementById('importFile').click()" class="btn-submit" style="background:#777; margin-top:0;">Restore Data</button>
+                <input type="file" id="importFile" accept=".json" style="display:none;" onchange="restoreData(event)">
+            </div>
+
+            <button onclick="clearAllData()" class="btn-submit" style="background:#dc3545; margin-top:15px;">Danger: Erase All Data</button>
+        </div>
+    </div>
+
+    <script>
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0];
+        document.getElementById('driveDate').value = formattedDate;
+        document.getElementById('energyDate').value = formattedDate;
+        
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        document.getElementById('dashMonthLabel').innerText = `Current Month: ${monthNames[today.getMonth()]} ${today.getFullYear()}`;
+
+        const STORAGE_KEY = 'byd_final_logs';
+        let logs = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+        initApp();
+
+        function initApp() {
+            updateDashboard();
+            updateTopStatus();
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.className = "toast show";
+            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        function calculateStats(dataset) {
+            let dist=0, cost=0, kwh=0, trips=0, energy=0, evDist=0, hevDist=0;
+            dataset.forEach(l => {
+                let d = parseFloat(l.distance) || 0;
+                dist += d; cost += parseFloat(l.costUSD) || 0; kwh += parseFloat(l.kwh) || 0;
+                if (l.type.includes('Trip') && l.type !== 'Carryover') {
+                    trips++;
+                    if (l.type === 'EV Trip') evDist += d;
+                    if (l.type === 'HEV Trip') hevDist += d;
+                } else if (l.type === 'Charge' || l.type === 'Refuel') { energy++; }
+            });
+            return {dist, cost, kwh, trips, energy, evDist, hevDist};
+        }
+
+        function getTrendHTML(curr, prev, inverse = false) {
+            if(prev === 0 && curr === 0) return '';
+            if(prev === 0) return `<span style="font-size:0.75rem; color:#28a745; margin-left:6px;">(New)</span>`;
+            const pct = ((curr - prev)/prev) * 100;
+            if(pct === 0) return `<span style="font-size:0.75rem; color:var(--text-gray); margin-left:6px;">- 0%</span>`;
+            
+            const isUp = pct > 0;
+            const isGood = inverse ? !isUp : isUp; 
+            const color = isGood ? '#28a745' : '#dc3545'; 
+            const arrow = isUp ? '↑' : '↓';
+            return `<span style="font-size:0.75rem; color:${color}; margin-left:6px; font-weight:700;">${arrow} ${Math.abs(pct).toFixed(0)}%</span>`;
+        }
+
+        function updateDashboard() {
+            const currMonthStr = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, '0');
+            const prevDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            const prevMonthStr = prevDate.getFullYear() + "-" + String(prevDate.getMonth() + 1).padStart(2, '0');
+
+            let currLogs = logs.filter(l => l.date.startsWith(currMonthStr));
+            let prevLogs = logs.filter(l => l.date.startsWith(prevMonthStr));
+
+            let currStats = calculateStats(currLogs);
+            let prevStats = calculateStats(prevLogs);
+
+            document.getElementById('currDist').innerText = currStats.dist.toFixed(0);
+            
+            let costPerKm = currStats.dist > 0 ? (currStats.cost / currStats.dist) : 0;
+            document.getElementById('insightCostKm').innerHTML = `$${costPerKm.toFixed(3)}<span> / km</span>`;
+            document.getElementById('insightTrips').innerHTML = `${currStats.trips} ${getTrendHTML(currStats.trips, prevStats.trips)}`;
+            document.getElementById('insightEvents').innerHTML = `${currStats.energy} ${getTrendHTML(currStats.energy, prevStats.energy)}`;
+
+            document.getElementById('statCost').innerHTML = `$${currStats.cost.toFixed(2)} ${getTrendHTML(currStats.cost, prevStats.cost, true)}`;
+            document.getElementById('statKwh').innerHTML = `${currStats.kwh.toFixed(1)} ${getTrendHTML(currStats.kwh, prevStats.kwh)}`;
+
+            let evPct = currStats.dist > 0 ? Math.round((currStats.evDist / currStats.dist) * 100) : 0;
+            let hevPct = currStats.dist > 0 ? Math.round((currStats.hevDist / currStats.dist) * 100) : 0;
+
+            document.getElementById('evPct').innerText = evPct;
+            document.getElementById('hevPct').innerText = hevPct;
+            document.getElementById('evBar').style.width = evPct + "%";
+            document.getElementById('hevBar').style.width = hevPct + "%";
+        }
+
+        function updateTopStatus() {
+            const lastTrip = logs.slice().reverse().find(l => l.endSoc !== "" || l.endFuel !== "");
+            if (lastTrip) {
+                if (lastTrip.endSoc !== "") document.getElementById('topSoc').innerText = lastTrip.endSoc + "%";
+                if (lastTrip.endFuel !== "") document.getElementById('topFuel').innerText = lastTrip.endFuel + "%";
+            }
+        }
+
+        function openDrawer(id) {
+            if(id === 'driveDrawer') {
+                const lastTrip = logs.slice().reverse().find(l => l.endSoc !== "" || l.endFuel !== "");
+                if (lastTrip) {
+                    document.getElementById('driveStartSoc').value = lastTrip.endSoc;
+                    document.getElementById('driveStartFuel').value = lastTrip.endFuel;
+                }
+            } else if (id === 'energyDrawer') {
+                let defaultElec = 740;
+                let defaultFuel = 4500;
+                
+                const lastCharge = logs.slice().reverse().find(l => l.type === 'Charge' && l.kwh > 0 && l.costKHR > 0);
+                if (lastCharge) defaultElec = Math.round(lastCharge.costKHR / lastCharge.kwh);
+                
+                const lastRefuel = logs.slice().reverse().find(l => l.type === 'Refuel' && l.liters > 0 && l.costKHR > 0);
+                if (lastRefuel) defaultFuel = Math.round(lastRefuel.costKHR / lastRefuel.liters);
+
+                document.getElementById('rateElecInput').value = defaultElec;
+                document.getElementById('rateFuelInput').value = defaultFuel;
+            }
+            document.getElementById(id).style.display = 'flex';
+        }
+
+        function closeDrawer(event, id) {
+            if (event.target.className === 'overlay') document.getElementById(id).style.display = 'none';
+        }
+
+        function toggleEnergyFields() {
+            const type = document.getElementById('energyType').value;
+            document.getElementById('chargeInputs').style.display = (type === 'Charge') ? 'block' : 'none';
+            document.getElementById('refuelInputs').style.display = (type === 'Refuel') ? 'block' : 'none';
+            calcCost();
+        }
+
+        function estimateKwh() {
+            let start = parseFloat(document.getElementById('chargeStart').value) || 0;
+            let end = parseFloat(document.getElementById('chargeEnd').value) || 0;
+            let capacity = parseFloat(document.getElementById('batteryCap').value) || 18.3;
+            
+            if (end > start) {
+                let estimatedKwh = ((end - start) / 100) * capacity;
+                document.getElementById('energyKwh').value = estimatedKwh.toFixed(2);
+                calcCost();
+            } else {
+                alert("End SoC must be greater than Start SoC.");
+            }
+        }
+
+        function calcCost() {
+            const type = document.getElementById('energyType').value;
+            let totalKHR = 0;
+
+            if (type === 'Charge') {
+                totalKHR = (parseFloat(document.getElementById('energyKwh').value) || 0) * (parseFloat(document.getElementById('rateElecInput').value) || 0);
+            } else {
+                totalKHR = (parseFloat(document.getElementById('energyLiters').value) || 0) * (parseFloat(document.getElementById('rateFuelInput').value) || 0);
+            }
+
+            if (totalKHR > 0) {
+                document.getElementById('calcCostKHR').value = Math.round(totalKHR).toLocaleString() + " ៛";
+                document.getElementById('calcCostUSD').value = "$" + (totalKHR / 4000).toFixed(2);
+            } else {
+                document.getElementById('calcCostKHR').value = ""; document.getElementById('calcCostUSD').value = "";
+            }
+        }
+
+        document.getElementById('driveForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const entry = {
+                date: document.getElementById('driveDate').value,
+                type: document.getElementById('driveMode').value,
+                desc: document.getElementById('driveDesc').value,
+                distance: document.getElementById('driveDist').value || 0,
+                startSoc: document.getElementById('driveStartSoc').value, endSoc: document.getElementById('driveEndSoc').value,
+                startFuel: document.getElementById('driveStartFuel').value, endFuel: document.getElementById('driveEndFuel').value,
+                kwh: '', liters: '', costKHR: 0, costUSD: 0
+            };
+            logs.push(entry); localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+            this.reset(); document.getElementById('driveDate').value = formattedDate;
+            document.getElementById('driveDrawer').style.display = 'none';
+            initApp();
+            showToast("🚗 Drive Saved!");
+        });
+
+        document.getElementById('energyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const type = document.getElementById('energyType').value;
+            const khrVal = parseInt(document.getElementById('calcCostKHR').value.replace(/[^0-9]/g, '')) || 0;
+            const entry = {
+                date: document.getElementById('energyDate').value,
+                type: type, desc: document.getElementById('energyDesc').value, distance: 0,
+                startSoc: type === 'Charge' ? document.getElementById('chargeStart').value : '', 
+                endSoc: type === 'Charge' ? document.getElementById('chargeEnd').value : '', 
+                startFuel: '', endFuel: '',
+                kwh: type === 'Charge' ? document.getElementById('energyKwh').value : '',
+                liters: type === 'Refuel' ? document.getElementById('energyLiters').value : '',
+                costKHR: khrVal, costUSD: khrVal > 0 ? (khrVal / 4000).toFixed(2) : 0
+            };
+            logs.push(entry); localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+            this.reset(); document.getElementById('energyDate').value = formattedDate;
+            document.getElementById('energyDrawer').style.display = 'none';
+            initApp();
+            showToast(type === 'Charge' ? "⚡ Charge Saved!" : "⛽ Refuel Saved!");
+        });
+
+        function renderLedger() {
+            const tbody = document.querySelector('#ledgerTable tbody');
+            tbody.innerHTML = '';
+            
+            const monthFilter = document.getElementById('ledgerMonthFilter').value; 
+            let displayLogs = logs;
+            if (monthFilter) displayLogs = logs.filter(log => log.date.startsWith(monthFilter));
+
+            if(displayLogs.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">No logs found.</td></tr>'; return; }
+
+            displayLogs.slice().reverse().forEach((log) => {
+                const originalIdx = logs.indexOf(log);
+                let val = log.distance > 0 ? `${log.distance}km` : (log.kwh ? `${log.kwh}kWh` : (log.liters ? `${log.liters}L` : '-'));
+                let cost = log.costUSD > 0 ? `$${log.costUSD}` : '-';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-size:0.75rem">${log.date.substring(5)}</td>
+                        <td><strong>${log.type.split(' ')[0]}</strong><br><span style="font-size:0.7rem;opacity:0.7">${log.desc}</span></td>
+                        <td>${val}</td>
+                        <td style="font-weight:600">${cost}</td>
+                        <td class="del-btn" onclick="deleteLog(${originalIdx})">✕</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function deleteLog(i) { if(confirm("Delete record?")) { logs.splice(i, 1); localStorage.setItem(STORAGE_KEY, JSON.stringify(logs)); initApp(); renderLedger(); showToast("Record Deleted"); } }
+        function clearAllData() { if(confirm("Erase all data?")) { logs = []; localStorage.removeItem(STORAGE_KEY); initApp(); document.getElementById('ledgerDrawer').style.display='none'; showToast("All Data Cleared"); } }
+        
+        function exportCSV() {
+            const monthFilter = document.getElementById('ledgerMonthFilter').value;
+            let exportLogs = logs;
+            if (monthFilter) exportLogs = logs.filter(log => log.date.startsWith(monthFilter));
+            if(!exportLogs.length) { showToast("Logs empty."); return; }
+            let csv = "Date,Type,Description,Distance (km),Start SoC (%),End SoC (%),Start Fuel (%),End Fuel (%),Charged (kWh),Refueled (L),Total Cost (USD)\n";
+            exportLogs.forEach(r => { csv += `${r.date},"${r.type}","${r.desc}",${r.distance},${r.startSoc},${r.endSoc},${r.startFuel},${r.endFuel},${r.kwh},${r.liters},${r.costUSD}\n`; });
+            const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+            link.download = monthFilter ? `BYD_Logs_${monthFilter}.csv` : "BYD_Master_Logs.csv"; link.click();
+            showToast("CSV Downloaded");
+        }
+
+        function backupData() {
+            if(!logs.length) { showToast("No data to backup."); return; }
+            const dataStr = JSON.stringify(logs);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "BYD_System_Backup.json";
+            link.click();
+            showToast("Backup Downloaded");
+        }
+
+        function restoreData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedLogs = JSON.parse(e.target.result);
+                    if (Array.isArray(importedLogs)) {
+                        logs = importedLogs;
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+                        initApp();
+                        document.getElementById('ledgerDrawer').style.display='none';
+                        showToast("System Restored Successfully!");
+                    } else {
+                        alert("Invalid backup file format.");
+                    }
+                } catch (error) {
+                    alert("Error reading backup file.");
+                }
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+</html>
