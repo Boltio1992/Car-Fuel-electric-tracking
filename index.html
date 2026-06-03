@@ -10,7 +10,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="icon.png">
 
-    <!-- Chart.js Engine CDN for High-Fidelity Graphics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -25,7 +24,7 @@
             --card-radius: 20px;
         }
 
-        /* REQ 4: Theme Configuration Roots */
+        /* Theme Configuration Roots */
         [data-theme="dark"] {
             --light-bg: #161a1d;
             --text-dark: #f0f3f5;
@@ -94,8 +93,15 @@
         .action-icon { font-size: 1.5rem; margin-bottom: 2px; }
         .action-label { font-size: 0.65rem; font-weight: 600; color: var(--text-gray); }
 
-        .card-header { font-size: 1rem; font-weight: 600; margin-bottom: 15px; color: var(--text-dark); display: flex; justify-content: space-between;}
+        .card-header { font-size: 1rem; font-weight: 600; margin-bottom: 15px; color: var(--text-dark); display: flex; justify-content: space-between; align-items: center; }
         
+        /* Interactive Dual-Axis Chart Toggle Controls Layout */
+        .chart-toggle-group { display: flex; background: rgba(0,0,0,0.05); padding: 2px; border-radius: 10px; }
+        [data-theme="dark"] .chart-toggle-group { background: rgba(255,255,255,0.08); }
+        .toggle-tab-btn { border: none; background: none; font-size: 0.75rem; font-weight: 700; padding: 6px 12px; border-radius: 8px; cursor: pointer; color: var(--text-gray); }
+        .toggle-tab-btn.active { background: #ffffff; color: #1F4E78; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        [data-theme="dark"] .toggle-tab-btn.active { background: #1c232b; color: #8eb3cf; }
+
         .metrics-stack { display: flex; flex-direction: column; gap: 12px; }
         .stack-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); }
         .stack-row:last-child { border-bottom: none; padding-bottom: 0; }
@@ -159,7 +165,6 @@
 
     <div class="container">
         
-        <!-- TOP: Status Dashboard -->
         <div class="top-header-row">
             <div class="top-status" style="margin:0; padding:0;">
                 <div class="vehicle-name" id="displayVehicleTitle">My SEALION 5 DM-i</div>
@@ -171,17 +176,14 @@
                     </div>
                 </div>
             </div>
-            <!-- REQ 4: Gear settings interface trigger inside header layout -->
             <button class="settings-header-btn" onclick="openDrawer('settingsDrawer')">⚙️</button>
         </div>
 
-        <!-- Home Screen Filters and Exchange Rate -->
         <div class="filter-strip">
             <input type="month" id="homeMonthFilter" class="home-filter-input" onchange="updateDashboard()">
             <div id="exchangeRateBadge" class="exchange-rate-badge">Rate: 1$ = 4,000៛</div>
         </div>
 
-        <!-- Cost Efficiency Insights Card ($/100km or mi) -->
         <div class="glass-card insights-panel">
             <div class="insights-title">Realized Driving Cost Efficiency</div>
             <div class="cost-per-km" id="insightCostKm">$0.00<span id="efficiencyUnitLabel"> / 100 km</span></div>
@@ -198,7 +200,6 @@
             </div>
         </div>
 
-        <!-- QUICK ACTIONS -->
         <div class="quick-actions">
             <button class="action-circle" onclick="openDrawer('driveDrawer')">
                 <div class="action-icon">🚗</div><div class="action-label">Drive</div>
@@ -214,15 +215,19 @@
             </button>
         </div>
 
-        <!-- REQ 3: VISUAL ANALYSIS CHART PANEL CARD -->
         <div class="glass-card" style="padding: 16px;">
-            <div class="card-header" style="margin-bottom:10px;">Monthly Cost Breakdown</div>
+            <div class="card-header" style="margin-bottom:12px;">
+                <span>Efficiency Trends</span>
+                <div class="chart-toggle-group">
+                    <button id="toggleBtnDay" class="toggle-tab-btn active" onclick="switchChartTimeline('day')">Today</button>
+                    <button id="toggleBtnWeek" class="toggle-tab-btn" onclick="switchChartTimeline('week')">7 Days</button>
+                </div>
+            </div>
             <div style="position: relative; width: 100%; height: 200px;">
                 <canvas id="homeAnalysisChart"></canvas>
             </div>
         </div>
 
-        <!-- FROSTED CARD: Monthly Breakdown (REQ 2: Added EV and HEV Cost Rows) -->
         <div class="glass-card">
             <div class="card-header">Monthly Energy Breakdown</div>
             <div class="metrics-stack">
@@ -258,15 +263,9 @@
         </div>
     </div>
 
-    <!-- Toast Component -->
     <div id="toast" class="toast">Action Successful</div>
 
 
-    <!-- ======================= -->
-    <!-- SLIDING DRAWER OVERLAYS -->
-    <!-- ======================= -->
-
-    <!-- REQ 4: SYSTEM SETTINGS MANAGEMENT DRAWER -->
     <div id="settingsDrawer" class="overlay" onclick="closeDrawer(event, 'settingsDrawer')">
         <div class="drawer" onclick="event.stopPropagation()">
             <div class="drawer-handle"></div>
@@ -300,7 +299,6 @@
         </div>
     </div>
 
-    <!-- DRAWER 1: DRIVE TRIP LOG -->
     <div id="driveDrawer" class="overlay" onclick="closeDrawer(event, 'driveDrawer')">
         <div class="drawer" onclick="event.stopPropagation()">
             <div class="drawer-handle"></div>
@@ -326,7 +324,6 @@
         </div>
     </div>
 
-    <!-- DRAWER 2: BATTERY CHARGE LOG -->
     <div id="chargeDrawer" class="overlay" onclick="closeDrawer(event, 'chargeDrawer')">
         <div class="drawer" onclick="event.stopPropagation()">
             <div class="drawer-handle"></div>
@@ -367,7 +364,6 @@
         </div>
     </div>
 
-    <!-- DRAWER 3: FUEL REFUEL LOG -->
     <div id="refuelDrawer" class="overlay" onclick="closeDrawer(event, 'refuelDrawer')">
         <div class="drawer" onclick="event.stopPropagation()">
             <div class="drawer-handle"></div>
@@ -396,7 +392,6 @@
         </div>
     </div>
 
-    <!-- DRAWER 4: MASTER HISTORY LEDGER -->
     <div id="ledgerDrawer" class="overlay" onclick="closeDrawer(event, 'ledgerDrawer')">
         <div class="drawer" onclick="event.stopPropagation()" style="max-height:90vh;">
             <div class="drawer-handle"></div>
@@ -425,7 +420,8 @@
 
         let liveExchangeRate = 4000; 
         let editingIndex = null; 
-        let dashboardChartInstance = null; // Chart pointer
+        let dashboardChartInstance = null; 
+        let currentChartMode = 'day'; // State tracker: 'day' or 'week'
 
         const todayObj = new Date();
         const currentYearMonth = todayObj.getFullYear() + "-" + String(todayObj.getMonth() + 1).padStart(2, '0');
@@ -435,7 +431,6 @@
         document.getElementById('chargeDate').value = todayObj.toISOString().split('T')[0];
         document.getElementById('refuelDate').value = todayObj.toISOString().split('T')[0];
 
-        // System configuration loading
         document.getElementById('batteryCap').value = localStorage.getItem('byd_battery_cap') || '18.3';
         document.getElementById('settingsTitleInput').value = localStorage.getItem('byd_app_title') || 'My SEALION 5 DM-i';
         document.getElementById('settingsThemeSelect').value = localStorage.getItem('byd_app_theme') || 'light';
@@ -450,7 +445,6 @@
             updateTopStatus();
         }
 
-        // --- REQ 4: LOAD USER SETTINGS INTERFACE STATE CONFIGURATIONS ---
         function loadConfiguredSettings() {
             const title = localStorage.getItem('byd_app_title') || 'My SEALION 5 DM-i';
             const theme = localStorage.getItem('byd_app_theme') || 'light';
@@ -503,14 +497,14 @@
         function getHistoricalRates() {
             let elecRate = parseFloat(document.getElementById('rateElecBase').value) || 740;
             let fuelRate = parseFloat(document.getElementById('rateFuelBase').value) || 4500;
-            const lastCharge = logs.slice().reverse().find(l => l.type === 'Charge' && l.kwh > 0 && l.costKHR > 0);
+            // Guard conditions checking wrapped elements to keep local code runtime error-free
+            const lastCharge = logs.slice().reverse().find(l => l && l.type === 'Charge' && l.kwh > 0 && l.costKHR > 0);
             if (lastCharge) elecRate = Math.round(lastCharge.costKHR / lastCharge.kwh);
-            const lastRefuel = logs.slice().reverse().find(l => l.type === 'Refuel' && l.liters > 0 && l.costKHR > 0);
+            const lastRefuel = logs.slice().reverse().find(l => l && l.type === 'Refuel' && l.liters > 0 && l.costKHR > 0);
             if (lastRefuel) fuelRate = Math.round(lastRefuel.costKHR / lastRefuel.liters);
             return { elecRate, fuelRate };
         }
 
-        // --- UNIT PARSER METRIC MECHANIC ---
         function parseDistance(valInKm) {
             const unit = localStorage.getItem('byd_app_unit') || 'km';
             if (unit === 'mi') return valInKm * 0.621371;
@@ -521,25 +515,18 @@
             const homeFilterVal = document.getElementById('homeMonthFilter').value; 
             if(!homeFilterVal) return;
 
-            let currentMonthLogs = logs.filter(l => l.date.startsWith(homeFilterVal));
+            let currentMonthLogs = logs.filter(l => l && l.date && String(l.date).startsWith(homeFilterVal));
             let curr = calculateStats(currentMonthLogs);
 
-            // Unit adapted odometer distance parameters
             let displayedDistance = parseDistance(curr.dist);
-            
-            // Realized driving cost logic calculations matching metric systems
             let costPer100Units = displayedDistance > 0 ? ((curr.realizedDriveCost / displayedDistance) * 100) : 0;
             document.getElementById('insightCostKm').innerHTML = `$${costPer100Units.toFixed(3)}<span> / 100 ${localStorage.getItem('byd_app_unit') || 'km'}</span>`;
 
             document.getElementById('insightTrips').innerText = curr.trips;
             document.getElementById('insightEvents').innerText = curr.energyEvents;
-            
             document.getElementById('statCost').innerText = `$${curr.walletSpent.toFixed(2)}`;
-            
-            // REQ 2: Display individual dynamic driving outputs
             document.getElementById('statDriveCostEv').innerText = `$${curr.evDriveCost.toFixed(2)}`;
             document.getElementById('statDriveCostHev').innerText = `$${curr.hevDriveCost.toFixed(2)}`;
-            
             document.getElementById('statKwh').innerText = curr.kwhCharged.toFixed(1);
             document.getElementById('statLiters').innerText = curr.litersRefueled.toFixed(1);
 
@@ -550,8 +537,8 @@
             document.getElementById('evBar').style.width = evPct + "%";
             document.getElementById('hevBar').style.width = hevPct + "%";
 
-            // REQ 3: RENDER RENDERING ENGINE FOR CHART RE-DRAWS
-            renderCostBreakdownChart(curr);
+            // Fire lookback trend compiler graphics engine
+            renderTrendChartEngine(currentMonthLogs);
         }
 
         function calculateStats(dataset) {
@@ -560,17 +547,17 @@
             let batCap = parseFloat(localStorage.getItem('byd_battery_cap')) || 18.3;
 
             dataset.forEach(l => {
+                if(!l) return;
                 let d = parseFloat(l.distance) || 0;
+                let typeStr = String(l.type || '');
                 
-                if (l.type.includes('Trip')) {
+                if (typeStr.includes('Trip')) {
                     dist += d; trips++;
-                    if (l.type === 'EV Trip') evDist += d;
-                    if (l.type === 'HEV Trip') hevDist += d;
+                    if (typeStr === 'EV Trip') evDist += d;
+                    if (typeStr === 'HEV Trip') hevDist += d;
 
                     let entryCostUSD = parseFloat(l.costUSD) || 0;
                     let tripEvCost = 0, tripHevCost = 0;
-
-                    // Calculate lookback rates if undefined
                     let sSoc = parseFloat(l.startSoc), eSoc = parseFloat(l.endSoc);
                     let sFl = parseFloat(l.startFuel), eFl = parseFloat(l.endFuel);
                     
@@ -580,70 +567,117 @@
                     if (entryCostUSD === 0) entryCostUSD = tripEvCost + tripHevCost;
 
                     realizedDriveCost += entryCostUSD;
-                    // REQ 2: Map separate category variables
                     evDriveCost += tripEvCost;
                     hevDriveCost += tripHevCost;
 
-                } else if (l.type === 'Charge') {
+                } else if (typeStr === 'Charge') {
                     energyEvents++; kwhCharged += parseFloat(l.kwh) || 0;
                     walletSpent += parseFloat(l.costUSD) || 0;
-                } else if (l.type === 'Refuel') {
+                } else if (typeStr === 'Refuel') {
                     energyEvents++; litersRefueled += parseFloat(l.liters) || 0;
                     walletSpent += parseFloat(l.costUSD) || 0;
-                } else if (l.type === 'Carryover') {
+                } else if (typeStr === 'Carryover') {
                     dist += d; walletSpent += parseFloat(l.costUSD) || 0;
                 }
             });
             return {dist, walletSpent, realizedDriveCost, evDriveCost, hevDriveCost, kwhCharged, litersRefueled, trips, energyEvents, evDist, hevDist};
         }
 
-        // --- REQ 3: INTERACTIVE DYNAMIC CHART GENERATOR ENGINE ---
-        function renderCostBreakdownChart(stats) {
+        // --- INTERACTIVE LINE TREND TOGGLE COMPILER ---
+        function switchChartTimeline(mode) {
+            currentChartMode = mode;
+            document.getElementById('toggleBtnDay').className = mode === 'day' ? 'toggle-tab-btn active' : 'toggle-tab-btn';
+            document.getElementById('toggleBtnWeek').className = mode === 'week' ? 'toggle-tab-btn active' : 'toggle-tab-btn';
+            updateDashboard();
+        }
+
+        function renderTrendChartEngine(monthLogs) {
             const ctx = document.getElementById('homeAnalysisChart').getContext('2d');
-            
             if (dashboardChartInstance) { dashboardChartInstance.destroy(); }
 
+            let labels = []; let kwhDataset = []; let litersDataset = [];
+            let batCap = parseFloat(localStorage.getItem('byd_battery_cap')) || 18.3;
+            const currentUnit = localStorage.getItem('byd_app_unit') || 'km';
+
+            if (currentChartMode === 'day') {
+                // Show last 5 granular single journeys inside active month selection
+                let lastEntries = monthLogs.filter(l => l && String(l.type || '').includes('Trip')).slice(-5);
+                labels = lastEntries.map(l => String(l.desc || 'Trip').substring(0, 12));
+                
+                lastEntries.forEach(l => {
+                    let d = parseDistance(parseFloat(l.distance) || 0);
+                    let sSoc = parseFloat(l.startSoc)||0, eSoc = parseFloat(l.endSoc)||0;
+                    let sFl = parseFloat(l.startFuel)||0, eFl = parseFloat(l.endFuel)||0;
+                    
+                    let kwhBurn = (sSoc > eSoc) ? ((sSoc - eSoc)/100)*batCap : 0;
+                    let lBurn = (sFl > eFl) ? ((sFl - eFl)/100)*60 : 0;
+
+                    kwhDataset.push(d > 0 ? ((kwhBurn / d) * 100) : 0);
+                    litersDataset.push(d > 0 ? ((lBurn / d) * 100) : 0);
+                });
+            } else {
+                // Show 7 calendar day aggregated efficiency trends
+                for (let i = 6; i >= 0; i--) {
+                    let dTarget = new Date(); dTarget.setDate(dTarget.getDate() - i);
+                    let dStr = dTarget.toISOString().split('T')[0];
+                    labels.push(dTarget.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' }));
+
+                    let dayLogs = logs.filter(l => l && l.date === dStr && String(l.type || '').includes('Trip'));
+                    let dayDist = dayLogs.reduce((acc, l) => acc + parseDistance(parseFloat(l.distance) || 0), 0);
+                    
+                    let dayKwh = dayLogs.reduce((acc, l) => {
+                        let diff = (parseFloat(l.startSoc)||0) - (parseFloat(l.endSoc)||0);
+                        return acc + (diff > 0 ? (diff/100)*batCap : 0);
+                    }, 0);
+                    let dayL = dayLogs.reduce((acc, l) => {
+                        let diff = (parseFloat(l.startFuel)||0) - (parseFloat(l.endFuel)||0);
+                        return acc + (diff > 0 ? (diff/100)*60 : 0);
+                    }, 0);
+
+                    kwhDataset.push(dayDist > 0 ? ((dayKwh / dayDist) * 100) : 0);
+                    litersDataset.push(dayDist > 0 ? ((dayL / dayDist) * 100) : 0);
+                }
+            }
+
             const isDark = localStorage.getItem('byd_app_theme') || 'light';
-            const labelColor = isDark === 'dark' ? '#b0b7bd' : '#666666';
+            const labelColor = isDark === 'dark' ? '#b0b7bd' : '#666';
 
             dashboardChartInstance = new Chart(ctx, {
-                type: 'bar',
+                type: 'line',
                 data: {
-                    labels: ['Wallet Spent', 'EV Consumed', 'HEV Consumed'],
-                    datasets: [{
-                        label: 'Cost Allocation ($)',
-                        data: [stats.walletSpent.toFixed(2), stats.evDriveCost.toFixed(2), stats.hevDriveCost.toFixed(2)],
-                        backgroundColor: ['#3b74a3', '#5c9ccc', '#4ca1af'],
-                        borderRadius: 8,
-                        borderWidth: 0
-                    }]
+                    labels: labels,
+                    datasets: [
+                        { label: `kWh/100 ${currentUnit}`, data: kwhDataset, borderColor: '#1F4E78', backgroundColor: 'transparent', yAxisID: 'y', tension: 0.2 },
+                        { label: `L/100 ${currentUnit}`, data: litersDataset, borderColor: '#4ca1af', backgroundColor: 'transparent', yAxisID: 'y1', tension: 0.2 }
+                    ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    responsive: true, maintainAspectRatio: false,
                     scales: {
                         x: { ticks: { color: labelColor }, grid: { display: false } },
-                        y: { ticks: { color: labelColor }, grid: { color: isDark === 'dark' ? '#2c3d4f' : '#eef2f5' } }
-                    }
+                        y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Electricity', color: labelColor }, ticks: { color: labelColor }, grid: { color: isDark === 'dark' ? '#2c3d4f' : '#eef2f5' } },
+                        y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Fuel', color: labelColor }, ticks: { color: labelColor }, grid: { display: false } }
+                    },
+                    plugins: { legend: { labels: { color: labelColor, boxWidth: 12, font: { size: 10 } } } }
                 }
             });
         }
 
         function updateTopStatus() {
-            const lastTrip = logs.slice().reverse().find(l => l.endSoc !== "" || l.endFuel !== "");
+            // Guarded groupings looking up references cleanly to block runtime errors
+            const lastTrip = logs.slice().reverse().find(l => l && (l.endSoc !== "" || l.endFuel !== ""));
             if (lastTrip) {
                 if (lastTrip.endSoc !== "") document.getElementById('topSoc').innerText = lastTrip.endSoc + "%";
                 if (lastTrip.endFuel !== "") document.getElementById('topFuel').innerText = lastTrip.endFuel + "%";
             }
-            const tripLogs = logs.filter(l => l.type.includes('Trip'));
+            const tripLogs = logs.filter(l => l && String(l.type || '').includes('Trip'));
             let totalKm = tripLogs.reduce((acc, obj) => acc + (parseFloat(obj.distance) || 0), 0);
             document.getElementById('topDist').innerText = parseDistance(totalKm).toFixed(0);
         }
 
         function openDrawer(id) {
             if (id === 'driveDrawer' && editingIndex === null) {
-                const lastTrip = logs.slice().reverse().find(l => l.endSoc !== "" || l.endFuel !== "");
+                const lastTrip = logs.slice().reverse().find(l => l && (l.endSoc !== "" || l.endFuel !== ""));
                 if (lastTrip) {
                     document.getElementById('driveStartSoc').value = lastTrip.endSoc;
                     document.getElementById('driveStartFuel').value = lastTrip.endFuel;
@@ -698,7 +732,6 @@
 
         document.getElementById('driveForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
             let startSoc = parseFloat(document.getElementById('driveStartSoc').value) || 0;
             let endSoc = parseFloat(document.getElementById('driveEndSoc').value) || 0;
             let startFuel = parseFloat(document.getElementById('driveStartFuel').value) || 0;
@@ -706,7 +739,6 @@
             
             let rates = getHistoricalRates();
             let batteryCapacity = parseFloat(localStorage.getItem('byd_battery_cap')) || 18.3;
-            
             let calcCostKHR = 0, consumedKwh = 0, consumedLiters = 0;
             
             if (startSoc > endSoc) {
@@ -718,21 +750,15 @@
                 calcCostKHR += consumedLiters * rates.fuelRate;
             }
 
-            // Reverse unit conversions back to standard database base values (km) if saved under Imperial setting
             let rawDistanceInput = parseFloat(document.getElementById('driveDist').value) || 0;
             if((localStorage.getItem('byd_app_unit') || 'km') === 'mi') { rawDistanceInput = rawDistanceInput / 0.621371; }
-            
             let calcCostUSD = calcCostKHR > 0 ? (calcCostKHR / liveExchangeRate).toFixed(2) : 0;
 
             const entry = {
-                date: document.getElementById('driveDate').value,
-                type: document.getElementById('driveMode').value,
-                desc: document.getElementById('driveDesc').value,
-                distance: parseFloat(rawDistanceInput.toFixed(2)),
-                startSoc: document.getElementById('driveStartSoc').value, endSoc: document.getElementById('driveEndSoc').value,
+                date: document.getElementById('driveDate').value, type: document.getElementById('driveMode').value, desc: document.getElementById('driveDesc').value,
+                distance: parseFloat(rawDistanceInput.toFixed(2)), startSoc: document.getElementById('driveStartSoc').value, endSoc: document.getElementById('driveEndSoc').value,
                 startFuel: document.getElementById('driveStartFuel').value, endFuel: document.getElementById('driveEndFuel').value,
-                kwh: consumedKwh > 0 ? consumedKwh.toFixed(2) : '', 
-                liters: consumedLiters > 0 ? consumedLiters.toFixed(2) : '', 
+                kwh: consumedKwh > 0 ? consumedKwh.toFixed(2) : '', liters: consumedLiters > 0 ? consumedLiters.toFixed(2) : '', 
                 costKHR: Math.round(calcCostKHR), costUSD: parseFloat(calcCostUSD)
             };
             commitSave(entry, this, 'driveDrawer');
@@ -744,7 +770,7 @@
             const entry = {
                 date: document.getElementById('chargeDate').value, type: 'Charge', desc: document.getElementById('chargeDesc').value, distance: 0,
                 startSoc: document.getElementById('chargeStart').value, endSoc: document.getElementById('chargeEnd').value, startFuel: '', endFuel: '',
-                kwh: parseFloat(document.getElementById('energyKwh').value) || '',  liters: '',
+                kwh: parseFloat(document.getElementById('energyKwh').value) || '', liters: '',
                 costKHR: khrVal, costUSD: khrVal > 0 ? (khrVal / liveExchangeRate).toFixed(2) : 0
             };
             commitSave(entry, this, 'chargeDrawer');
@@ -762,67 +788,41 @@
             commitSave(entry, this, 'refuelDrawer');
         });
 
-        function commitSave(entry, formObj, drawerId) {
-            if (editingIndex !== null) {
-                logs[editingIndex] = entry;
-                showToast("Entry Updated!");
-            } else {
-                logs.push(entry);
-                showToast("Entry Saved!");
-            }
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
-            formObj.reset();
-            closeFormDrawer(drawerId);
-            initApp();
-            if(document.getElementById('ledgerDrawer').style.display === 'flex') renderLedger();
-        }
-
-        // --- REQ 1: CHRONOLOGICAL AUTO-SORTING TIMELINE RENDERING SYSTEM ---
         function renderLedger() {
-            const listContainer = document.getElementById('ledgerTimelineList');
-            listContainer.innerHTML = '';
+            const listContainer = document.getElementById('ledgerTimelineList'); listContainer.innerHTML = '';
             const monthFilter = document.getElementById('ledgerMonthFilter').value; 
-            
-            let rates = getHistoricalRates();
-            let batCap = parseFloat(localStorage.getItem('byd_battery_cap')) || 18.3;
+            let rates = getHistoricalRates(); let batCap = parseFloat(localStorage.getItem('byd_battery_cap')) || 18.3;
             let currentUnit = localStorage.getItem('byd_app_unit') || 'km';
 
-            // Create object maps that bundle items with original array pointer tracks
             let chronologicalLogs = logs.map((log, index) => ({ ...log, originalIndex: index }));
-            
-            // Sort database chronologically by date string objects descending
             chronologicalLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             chronologicalLogs.forEach((log) => {
-                if (monthFilter && !log.date.startsWith(monthFilter)) return;
+                if (!log) return;
+                if (monthFilter && (!log.date || !String(log.date).startsWith(monthFilter))) return;
 
                 let metricInfo = '';
-                if (log.distance > 0) {
-                    let distanceConverted = parseDistance(log.distance);
-                    metricInfo = `<div>📍 <b>${distanceConverted.toFixed(1)} ${currentUnit}</b></div>`;
-                }
+                if (log.distance > 0) metricInfo = `<div>📍 <b>${parseDistance(log.distance).toFixed(1)} ${currentUnit}</b></div>`;
                 if (log.kwh) metricInfo += `<div>⚡ <b>${parseFloat(log.kwh).toFixed(2)} kWh</b></div>`;
                 if (log.liters) metricInfo += `<div>¼ <b>${parseFloat(log.liters).toFixed(2)} L</b></div>`;
 
                 let socInfo = '';
                 if (log.startSoc && log.endSoc) {
-                    let textSymbol = log.type.includes('Trip') ? '📉 Pack:' : '🔌 Charge:';
+                    let textSymbol = String(log.type || '').includes('Trip') ? '📉 Pack:' : '🔌 Charge:';
                     socInfo = `<div>${textSymbol} ${log.startSoc}% → ${log.endSoc}%</div>`;
                 }
                 if (log.startFuel && log.endFuel) socInfo += `<div>💧 Fuel: ${log.startFuel}% → ${log.endFuel}%</div>`;
 
-                let costUSD = parseFloat(log.costUSD) || 0;
-                let costKHR = parseInt(log.costKHR) || 0;
+                let costUSD = parseFloat(log.costUSD) || 0; let costKHR = parseInt(log.costKHR) || 0;
+                let typeStr = String(log.type || '');
                 
-                if(log.type.includes('Trip') && costUSD === 0) {
+                if(typeStr.includes('Trip') && costUSD === 0) {
                     let sSoc = parseFloat(log.startSoc), eSoc = parseFloat(log.endSoc);
                     let sFl = parseFloat(log.startFuel), eFl = parseFloat(log.endFuel);
                     let tempKHR = 0;
                     if (sSoc > eSoc) tempKHR += (((sSoc - eSoc) / 100) * batCap) * rates.elecRate;
                     if (sFl > eFl) tempKHR += (((sFl - eFl) / 100) * 60) * rates.fuelRate;
-                    if (tempKHR > 0) {
-                        costKHR = Math.round(tempKHR); costUSD = parseFloat((tempKHR / liveExchangeRate).toFixed(2));
-                    }
+                    if (tempKHR > 0) { costKHR = Math.round(tempKHR); costUSD = parseFloat((tempKHR / liveExchangeRate).toFixed(2)); }
                 }
 
                 let costOutput = costUSD > 0 ? `$${costUSD.toFixed(2)} (${costKHR.toLocaleString()}៛)` : 'Free / Carryover';
@@ -830,14 +830,11 @@
                 let cardHTML = `
                     <div class="ledger-item-card">
                         <div class="ledger-card-top">
-                            <span class="ledger-card-title">${log.type.includes('Trip') ? '🚗' : (log.type === 'Charge' ? '⚡' : '⛽')} ${log.type}</span>
-                            <span class="ledger-card-date">${log.date}</span>
+                            <span class="ledger-card-title">${typeStr.includes('Trip') ? '🚗' : (typeStr === 'Charge' ? '⚡' : '⛽')} ${typeStr}</span>
+                            <span class="ledger-card-date">${log.date || ''}</span>
                         </div>
-                        <div class="ledger-card-desc"><b>Details:</b> ${log.desc}</div>
-                        <div class="ledger-card-metrics">
-                            ${metricInfo}
-                            ${socInfo}
-                        </div>
+                        <div class="ledger-card-desc"><b>Details:</b> ${log.desc || ''}</div>
+                        <div class="ledger-card-metrics">${metricInfo}${socInfo}</div>
                         <div class="ledger-card-bottom">
                             <span class="ledger-card-price">${costOutput}</span>
                             <div class="ledger-card-actions">
@@ -848,74 +845,9 @@
                     </div>`;
                 listContainer.insertAdjacentHTML('beforeend', cardHTML);
             });
-
-            if (listContainer.innerHTML === '') {
-                listContainer.innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-gray);">No logs found for this period.</p>';
-            }
         }
 
-        function initiateEdit(index) {
-            editingIndex = index;
-            const record = logs[index];
-            document.getElementById('ledgerDrawer').style.display = 'none'; 
-
-            if(record.type.includes('Trip') || record.type === 'Idle') {
-                document.getElementById('driveDate').value = record.date;
-                document.getElementById('driveMode').value = record.type;
-                document.getElementById('driveDesc').value = record.desc;
-                
-                let displayedDist = parseDistance(record.distance);
-                document.getElementById('driveDist').value = displayedDist.toFixed(1);
-                
-                document.getElementById('driveStartSoc').value = record.startSoc;
-                document.getElementById('driveEndSoc').value = record.endSoc;
-                document.getElementById('driveStartFuel').value = record.startFuel;
-                document.getElementById('driveEndFuel').value = record.endFuel;
-                
-                document.getElementById('driveSubmitBtn').innerText = "Update Trip";
-                document.getElementById('driveDrawerTitle').innerText = "✏️ Edit Drive Trip";
-                openDrawer('driveDrawer');
-            } 
-            else if(record.type === 'Charge') {
-                document.getElementById('chargeDate').value = record.date;
-                document.getElementById('chargeDesc').value = record.desc;
-                document.getElementById('chargeStart').value = record.startSoc;
-                document.getElementById('chargeEnd').value = record.endSoc;
-                document.getElementById('energyKwh').value = record.kwh;
-                document.getElementById('rateElecInput').value = record.kwh ? Math.round(record.costKHR / record.kwh) : '';
-                calcChargeCost();
-
-                document.getElementById('chargeSubmitBtn').innerText = "Update Charge";
-                document.getElementById('chargeDrawerTitle').innerText = "✏️ Edit Charge Log";
-                openDrawer('chargeDrawer');
-            }
-            else if(record.type === 'Refuel') {
-                document.getElementById('refuelDate').value = record.date;
-                document.getElementById('refuelDesc').value = record.desc;
-                document.getElementById('energyLiters').value = record.liters;
-                document.getElementById('rateFuelInput').value = record.liters ? Math.round(record.costKHR / record.liters) : '';
-                calcRefuelCost();
-
-                document.getElementById('refuelSubmitBtn').innerText = "Update Refuel";
-                document.getElementById('refuelDrawerTitle').innerText = "✏️ Edit Refuel Log";
-                openDrawer('refuelDrawer');
-            }
-        }
-
-        function deleteLog(i) { if(confirm("Erase line record?")) { logs.splice(i, 1); localStorage.setItem(STORAGE_KEY, JSON.stringify(logs)); initApp(); renderLedger(); showToast("Record Deleted"); } }
-        function clearAllData() { if(confirm("Clear storage log completely?")) { logs = []; localStorage.removeItem(STORAGE_KEY); initApp(); document.getElementById('ledgerDrawer').style.display='none'; showToast("Storage Formatted"); } }
-        
-        function exportCSV() {
-            const mFilter = document.getElementById('ledgerMonthFilter').value;
-            let exportSet = mFilter ? logs.filter(l => l.date.startsWith(mFilter)) : logs;
-            if(!exportSet.length) return alert("No logs extracted.");
-            let csv = "Date,Type,Description,Distance (km),Start SoC (%),End SoC (%),Start Fuel (%),End Fuel (%),Charged (kWh),Refueled (L),Total Cost (USD)\n";
-            exportSet.forEach(r => { csv += `${r.date},"${r.type}","${r.desc}",${r.distance},${r.startSoc},${r.endSoc},${r.startFuel},${r.endFuel},${r.kwh},${r.liters},${r.costUSD}\n`; });
-            const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-            link.download = mFilter ? `BYD_Logs_${mFilter}.csv` : "BYD_Master_Logs.csv"; link.click();
-        }
-
-        document.getElementById('importFile').addEventListener('change', function(event) {
+        function restoreData(event) {
             const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -926,16 +858,13 @@
                         initApp(); document.getElementById('ledgerDrawer').style.display='none';
                         showToast("System Restored!");
                     }
-                } catch { alert("Invalid backup structure."); }
+                } catch { alert("Invalid backup file."); }
             };
             reader.readAsText(file);
-        });
-
-        function backupData() {
-            const blob = new Blob([JSON.stringify(logs)], { type: "application/json" });
-            const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
-            link.download = "BYD_System_Backup.json"; link.click();
         }
+
+        function deleteLog(i) { if(confirm("Erase line record?")) { logs.splice(i, 1); localStorage.setItem(STORAGE_KEY, JSON.stringify(logs)); initApp(); renderLedger(); showToast("Record Deleted"); } }
+        function clearAllData() { if(confirm("Clear data completely?")) { logs = []; localStorage.removeItem(STORAGE_KEY); initApp(); document.getElementById('ledgerDrawer').style.display='none'; showToast("Storage Formatted"); } }
     </script>
 </body>
 </html>
