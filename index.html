@@ -10,9 +10,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link class="app-icon" rel="apple-touch-icon" href="icon.png">
 
+    <!-- Leaflet Map Canvas Assets CDNs -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+    <!-- Chart.js Data Graphing Engine CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -65,10 +67,13 @@
         [data-theme="dark"] .home-filter-input { background: rgba(255,255,255,0.1); }
         .exchange-rate-badge { font-size: 0.75rem; background: rgba(255,255,255,0.2); color: white; padding: 6px 12px; border-radius: 12px; font-weight: 500; backdrop-filter: blur(5px); }
 
+        /* Real-Time GPS Tracking Card Layout */
         .live-tracker-card { background: var(--card-bg); border-radius: var(--card-radius); padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); border: 1px solid rgba(255,255,255,0.5); display: flex; flex-direction: column; gap: 15px; transition: all 0.3s ease; }
         [data-theme="dark"] .live-tracker-card { border: 1px solid rgba(255,255,255,0.08); }
         .live-tracker-header { display: flex; justify-content: space-between; align-items: center; }
-        .live-badge { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; }
+        
+        /* Shorter alignment styles for badge */
+        .live-badge { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.3px; }
         .live-badge.active { color: #dc3545; }
         .live-pulse-dot { width: 8px; height: 8px; background: #666; border-radius: 50%; }
         .live-badge.active .live-pulse-dot { background: #dc3545; animation: pulseGlow 1.5s infinite alternate; }
@@ -76,6 +81,7 @@
         
         .live-tracker-action-btn { border: none; padding: 10px 18px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; color: white; background: #1F4E78; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(31,78,120,0.2); }
         .live-tracker-action-btn.stop { background: #dc3545; box-shadow: 0 4px 10px rgba(220,53,69,0.2); }
+        
         .live-tracker-stats-display { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; background: rgba(0,0,0,0.02); padding: 12px; border-radius: 12px; }
         [data-theme="dark"] .live-tracker-stats-display { background: rgba(255,255,255,0.02); }
         .live-stat-num { font-size: 1.4rem; font-weight: 700; color: #1F4E78; }
@@ -187,6 +193,7 @@
 
     <div class="container">
         
+        <!-- TOP: Status Header Dashboard -->
         <div class="top-header-row">
             <div class="top-status">
                 <div class="vehicle-name" id="displayVehicleTitle">My SEALION 5 DM-i</div>
@@ -201,16 +208,19 @@
             <button class="settings-header-btn" onclick="openDrawer('settingsDrawer')">⚙️</button>
         </div>
 
+        <!-- Home Screen Filters and Exchange Rate -->
         <div class="filter-strip">
             <input type="month" id="homeMonthFilter" class="home-filter-input" onchange="updateDashboard()">
             <div id="exchangeRateBadge" class="exchange-rate-badge">Rate: 1$ = 4,000៛</div>
         </div>
 
+        <!-- UPDATED LIVE TRIP TRACKER CONTROLLER SYSTEM (Short alignment text) -->
         <div class="live-tracker-card" id="liveMainCard">
             <div class="live-tracker-header">
                 <div class="live-badge" id="liveBadgeUI">
                     <div class="live-pulse-dot"></div>
-                    <span id="liveBadgeLabel">GPS Odometer Idle</span>
+                    <!-- Shortened to stop mobile text alignment dropping -->
+                    <span id="liveBadgeLabel">GPS Idle</span>
                 </div>
                 <button class="live-tracker-action-btn" id="liveActionTriggerBtn" onclick="handleLiveTrackingRequest()">▶️ Start Trip</button>
             </div>
@@ -231,11 +241,13 @@
             </div>
         </div>
 
+        <!-- Insights Summary Frame -->
         <div class="glass-card insights-panel">
             <div class="insights-title">Realized Driving Cost Efficiency</div>
             <div class="cost-per-km" id="insightCostKm">$0.00<span id="efficiencyUnitLabel"> / 100 km</span></div>
         </div>
 
+        <!-- QUICK ACTIONS GRID -->
         <div class="quick-actions">
             <button class="action-circle" onclick="openDrawer('driveDrawer')">
                 <div class="action-icon">🚗</div><div class="action-label">Drive</div>
@@ -251,6 +263,7 @@
             </button>
         </div>
 
+        <!-- HIGH FIDELITY GRAPH WITH DAY / 7-DAY INTERACTIVE TOGGLES -->
         <div class="glass-card" style="padding: 16px;">
             <div class="card-header" style="margin-bottom:12px;">
                 <span>Efficiency Trends</span>
@@ -264,11 +277,13 @@
             </div>
         </div>
 
+        <!-- EDITABLE BENCHMARK MATRIX METERS -->
         <div class="glass-card">
             <div class="card-header">EV Efficiency Benchmark</div>
             <div class="bench-stack" id="benchmarkListContainer"></div>
         </div>
 
+        <!-- MONTHLY REGISTRY STACK METRICS -->
         <div class="glass-card">
             <div class="card-header">Monthly Energy Breakdown</div>
             <div class="metrics-stack">
@@ -307,6 +322,11 @@
     <div id="toast" class="toast">Action Successful</div>
 
 
+    <!-- ======================= -->
+    <!-- SLIDING DRAWER OVERLAYS -->
+    <!-- ======================= -->
+
+    <!-- DRAWER: CONFIGURATION PANEL SETTINGS -->
     <div id="settingsDrawer" class="overlay" onclick="closeDrawer(event, 'settingsDrawer')">
         <div class="drawer" onclick="event.stopPropagation()">
             <div class="drawer-handle"></div>
@@ -352,6 +372,7 @@
         </div>
     </div>
 
+    <!-- DRAWER 1: DRIVE TRIP LOG -->
     <div id="driveDrawer" class="overlay" onclick="closeDrawer(event, 'driveDrawer')">
         <div class="drawer" onclick="event.stopPropagation()">
             <div class="drawer-handle"></div>
@@ -379,6 +400,7 @@
         </div>
     </div>
 
+    <!-- DRAWER 2: BATTERY CHARGE LOG -->
     <div id="chargeDrawer" class="overlay" onclick="closeDrawer(event, 'chargeDrawer')">
         <div class="drawer" onclick="event.stopPropagation()">
             <div class="drawer-handle"></div>
@@ -419,6 +441,7 @@
         </div>
     </div>
 
+    <!-- DRAWER 3: FUEL REFUEL LOG -->
     <div id="refuelDrawer" class="overlay" onclick="closeDrawer(event, 'refuelDrawer')">
         <div class="drawer" onclick="event.stopPropagation()">
             <div class="drawer-handle"></div>
@@ -447,6 +470,7 @@
         </div>
     </div>
 
+    <!-- DRAWER 4: LEDGER REGISTRY PANEL -->
     <div id="ledgerDrawer" class="overlay" onclick="closeDrawer(event, 'ledgerDrawer')">
         <div class="drawer" onclick="event.stopPropagation()" style="max-height:90vh;">
             <div class="drawer-handle"></div>
@@ -483,14 +507,15 @@
         let mapRouteLine = null;
         let screenWakeLock = null;
         
+        // FIX: Replaced syntax error (=) with safe object initializer (:)
         let trackingSession = {
             distanceKm: 0,
             startTime: null,
             timerInterval: null,
-            lastCoords = null
+            lastCoords: null
         };
 
-        // --- PRE-LOAD FAILSAFE EVENT BINDINGS (EXECUTES BEFORE COMPILATION CRASH RISKS) ---
+        // --- FAILSAFE INTERACTIVE EVENT LISTENERS ---
         document.getElementById('restoreTriggerBtn').addEventListener('click', () => {
             document.getElementById('importFile').click();
         });
@@ -504,7 +529,7 @@
                     if (Array.isArray(imported)) { 
                         logs = imported; 
                         localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
-                        autoFocusLatestLogMonth(); // Immediately jumps to May 2026 window view
+                        autoFocusLatestLogMonth(); 
                         initApp(); 
                         document.getElementById('ledgerDrawer').style.display='none';
                         showToast("System Restored!"); 
@@ -514,7 +539,6 @@
             reader.readAsText(file);
         });
 
-        // --- DEFENSIVE AUTO-FOCUS CALCULATOR ---
         function autoFocusLatestLogMonth() {
             if (logs && logs.length > 0) {
                 let validDates = logs.filter(l => l && l.date).map(l => String(l.date));
@@ -522,14 +546,13 @@
                     validDates.sort();
                     let latestDate = validDates[validDates.length - 1];
                     if (latestDate && latestDate.length >= 7) {
-                        let targetMonth = latestDate.substring(0, 7); // Output: YYYY-MM
+                        let targetMonth = latestDate.substring(0, 7); 
                         document.getElementById('homeMonthFilter').value = targetMonth;
                         document.getElementById('ledgerMonthFilter').value = targetMonth;
                         return;
                     }
                 }
             }
-            // Standard current date fallback
             const tObj = new Date();
             const yMonth = tObj.getFullYear() + "-" + String(tObj.getMonth() + 1).padStart(2, '0');
             document.getElementById('homeMonthFilter').value = yMonth;
@@ -590,7 +613,7 @@
                     localStorage.setItem('byd_gps_session_lock', JSON.stringify(serializedCacheState));
 
                     document.getElementById('liveBadgeUI').className = "live-badge active";
-                    document.getElementById('liveBadgeLabel').innerText = `Live Trace (${chosenMode ? 'EV' : 'HEV'})`;
+                    document.getElementById('liveBadgeLabel').innerText = "Live Trace";
                     document.getElementById('liveActionTriggerBtn').innerText = "⏹️ End Journey";
                     document.getElementById('liveActionTriggerBtn').className = "live-tracker-action-btn stop";
                 }, () => alert("GPS initialization canvas error."));
@@ -613,7 +636,7 @@
                 predictConsumption();
                 document.getElementById('mapWrapFrame').style.display = 'none';
                 document.getElementById('liveBadgeUI').className = "live-badge";
-                document.getElementById('liveBadgeLabel').innerText = "GPS Odometer Idle";
+                document.getElementById('liveBadgeLabel').innerText = "GPS Idle";
                 document.getElementById('liveActionTriggerBtn').innerText = "▶️ Start Trip";
                 document.getElementById('liveActionTriggerBtn').className = "live-tracker-action-btn";
                 document.getElementById('liveDistanceVal').innerText = "0.00"; document.getElementById('liveDurationVal').innerText = "00:00";
@@ -693,9 +716,9 @@
             document.getElementById('statLiters').innerText = curr.litersRefueled.toFixed(1);
 
             let evPct = curr.dist > 0 ? Math.round((curr.evDist / curr.dist) * 100) : 0;
-            let hevPct = curr.dist > 0 ? Math.round((curr.hevDist / curr.dist) * 100) : 0;
-            document.getElementById('evPct').innerText = evPct; document.getElementById('hevPct').innerText = hevPct;
-            document.getElementById('evBar').style.width = evPct + "%"; document.getElementById('hevBar').style.width = hevPct + "%";
+            let fontHevPct = curr.dist > 0 ? Math.round((curr.hevDist / curr.dist) * 100) : 0;
+            document.getElementById('evPct').innerText = evPct; document.getElementById('hevPct').innerText = fontHevPct;
+            document.getElementById('evBar').style.width = evPct + "%"; document.getElementById('hevBar').style.width = fontHevPct + "%";
 
             const lastTrip = logs.slice().reverse().find(l => l && l.endSoc !== "" || l.endFuel !== "");
             if (lastTrip) {
@@ -707,7 +730,6 @@
             renderBenchmarkWidget(curr.avgKwhPer100Unit);
         }
 
-        // --- BULLETPROOF TEXT ANALYSIS ENGINE (PREVENTS CRASHES) ---
         function calculateStats(dataset) {
             let dist=0, walletSpent=0, realizedDriveCost=0, evDriveCost=0, hevDriveCost=0, kwhCharged=0, litersRefueled=0, trips=0, energyEvents=0, evDist=0, hevDist=0;
             let rates = getHistoricalRates();
@@ -876,7 +898,7 @@
                 let metricInfo = '';
                 if (log.distance > 0) metricInfo = `<div>📍 <b>${parseDistance(log.distance).toFixed(1)} ${currentUnit}</b></div>`;
                 if (log.kwh) metricInfo += `<div>⚡ <b>${parseFloat(log.kwh).toFixed(2)} kWh</b></div>`;
-                if (log.liters) metricInfo += `<div>⛽ <b>${parseFloat(log.liters).toFixed(2)} L</b></div>`;
+                if (log.liters) metricInfo += `<div>¼ <b>${parseFloat(log.liters).toFixed(2)} L</b></div>`;
 
                 let socInfo = '';
                 if (log.startSoc && log.endSoc) socInfo = `<div>📉 Pack: ${log.startSoc}% → ${log.endSoc}%</div>`;
@@ -943,15 +965,100 @@
             }
         }
 
+        function openDrawer(id) {
+            if (id === 'driveDrawer' && editingIndex === null) {
+                const lastTrip = logs.slice().reverse().find(l => l && l.endSoc !== "" || l.endFuel !== "");
+                document.getElementById('driveStartSoc').value = lastTrip ? lastTrip.endSoc : 100;
+                document.getElementById('driveStartFuel').value = lastTrip ? lastTrip.endFuel : 100;
+                document.getElementById('driveDate').value = new Date().toISOString().split('T')[0];
+            } else if (id === 'chargeDrawer' && editingIndex === null) {
+                document.getElementById('rateElecInput').value = getHistoricalRates().elecRate;
+                document.getElementById('chargeDate').value = new Date().toISOString().split('T')[0];
+            } else if (id === 'refuelDrawer' && editingIndex === null) {
+                document.getElementById('rateFuelInput').value = getHistoricalRates().fuelRate;
+                document.getElementById('refuelDate').value = new Date().toISOString().split('T')[0];
+            }
+            document.getElementById(id).style.display = 'flex';
+        }
+
         function closeFormDrawer(id) { document.getElementById(id).style.display = 'none'; editingIndex = null; }
         function closeDrawer(event, id) { if (event.target.className === 'overlay') closeFormDrawer(id); }
 
-        function initApp() {
-            loadConfiguredSettings();
-            fetchLiveExchangeRate();
-            autoFocusLatestLogMonth(); // Evaluates newest log bounds
-            updateDashboard();
+        function estimateKwh() {
+            let start = parseFloat(document.getElementById('chargeStart').value) || 0;
+            let end = parseFloat(document.getElementById('chargeEnd').value) || 0;
+            let cap = parseFloat(document.getElementById('batteryCap').value) || 18.3;
+            if (end > start) {
+                document.getElementById('energyKwh').value = (((end - start) / 100) * cap).toFixed(2);
+                calcChargeCost();
+            } else { alert("End SoC must exceed Start SoC."); }
         }
+
+        function calcChargeCost() {
+            let kwh = parseFloat(document.getElementById('energyKwh').value) || 0;
+            let rate = parseFloat(document.getElementById('rateElecInput').value) || 0;
+            let khr = kwh * rate;
+            document.getElementById('chargeCostKHR').value = Math.round(khr).toLocaleString() + " ៛";
+            document.getElementById('chargeCostUSD').value = "$" + (khr / liveExchangeRate).toFixed(2);
+        }
+
+        function calcRefuelCost() {
+            let liters = parseFloat(document.getElementById('energyLiters').value) || 0;
+            let rate = parseFloat(document.getElementById('rateFuelInput').value) || 0;
+            let khr = liters * rate;
+            document.getElementById('refuelCostKHR').value = Math.round(khr).toLocaleString() + " ៛";
+            document.getElementById('refuelCostUSD').value = "$" + (khr / liveExchangeRate).toFixed(2);
+        }
+
+        document.getElementById('driveForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let startSoc = parseFloat(document.getElementById('driveStartSoc').value) || 0;
+            let endSoc = parseFloat(document.getElementById('driveEndSoc').value) || 0;
+            let startFuel = parseFloat(document.getElementById('driveStartFuel').value) || 0;
+            let endFuel = parseFloat(document.getElementById('driveEndFuel').value) || 0;
+            
+            let rates = getHistoricalRates();
+            let batteryCapacity = parseFloat(localStorage.getItem('byd_battery_cap')) || 18.3;
+            let calcCostKHR = 0, consumedKwh = 0, consumedLiters = 0;
+            
+            if (startSoc > endSoc) { consumedKwh = ((startSoc - endSoc) / 100) * batteryCapacity; calcCostKHR += consumedKwh * rates.elecRate; }
+            if (startFuel > endFuel) { consumedLiters = ((startFuel - endFuel) / 100) * 60; calcCostKHR += consumedLiters * rates.fuelRate; }
+
+            let rawDistanceInput = parseFloat(document.getElementById('driveDist').value) || 0;
+            if((localStorage.getItem('byd_app_unit') || 'km') === 'mi') { rawDistanceInput = rawDistanceInput / 0.621371; }
+            let calcCostUSD = calcCostKHR > 0 ? (calcCostKHR / liveExchangeRate).toFixed(2) : 0;
+
+            const entry = {
+                date: document.getElementById('driveDate').value, type: document.getElementById('driveMode').value, desc: document.getElementById('driveDesc').value,
+                distance: parseFloat(rawDistanceInput.toFixed(2)), startSoc: startSoc, endSoc: endSoc, startFuel: startFuel, endFuel: endFuel,
+                kwh: consumedKwh > 0 ? consumedKwh.toFixed(2) : '', liters: consumedLiters > 0 ? consumedLiters.toFixed(2) : '', 
+                costKHR: Math.round(calcCostKHR), costUSD: parseFloat(calcCostUSD)
+            };
+            commitSave(entry, this, 'driveDrawer');
+        });
+
+        document.getElementById('chargeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let khrVal = parseInt(document.getElementById('chargeCostKHR').value.replace(/[^0-9]/g, '')) || 0;
+            const entry = {
+                date: document.getElementById('chargeDate').value, type: 'Charge', desc: document.getElementById('chargeDesc').value, distance: 0,
+                startSoc: document.getElementById('chargeStart').value, endSoc: document.getElementById('chargeEnd').value, startFuel: '', endFuel: '',
+                kwh: parseFloat(document.getElementById('energyKwh').value) || '', liters: '',
+                costKHR: khrVal, costUSD: khrVal > 0 ? (khrVal / liveExchangeRate).toFixed(2) : 0
+            };
+            commitSave(entry, this, 'chargeDrawer');
+        });
+
+        document.getElementById('refuelForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let khrVal = parseInt(document.getElementById('refuelCostKHR').value.replace(/[^0-9]/g, '')) || 0;
+            const entry = {
+                date: document.getElementById('refuelDate').value, type: 'Refuel', desc: document.getElementById('refuelDesc').value, distance: 0,
+                startSoc: '', endSoc: '', startFuel: '', endFuel: '', kwh: '', liters: parseFloat(document.getElementById('energyLiters').value) || '',
+                costKHR: khrVal, costUSD: khrVal > 0 ? (khrVal / liveExchangeRate).toFixed(2) : 0
+            };
+            commitSave(entry, this, 'refuelDrawer');
+        });
 
         function commitSave(entry, formObj, drawerId) {
             if (editingIndex !== null) { logs[editingIndex] = entry; showToast("Entry Updated!"); } 
@@ -961,8 +1068,25 @@
             if(document.getElementById('ledgerDrawer').style.display === 'flex') renderLedger();
         }
 
+        function initApp() {
+            loadConfiguredSettings();
+            fetchLiveExchangeRate();
+            autoFocusLatestLogMonth(); 
+            updateDashboard();
+        }
+
         function deleteLog(i) { if(confirm("Erase line record?")) { logs.splice(i, 1); localStorage.setItem(STORAGE_KEY, JSON.stringify(logs)); initApp(); renderLedger(); showToast("Record Deleted"); } }
         function clearAllData() { if(confirm("Clear log completely?")) { logs = []; localStorage.removeItem(STORAGE_KEY); initApp(); document.getElementById('ledgerDrawer').style.display='none'; showToast("Storage Formatted"); } }
+        
+        function exportCSV() {
+            const mFilter = document.getElementById('ledgerMonthFilter').value;
+            let exportSet = mFilter ? logs.filter(l => l.date.startsWith(mFilter)) : logs;
+            if(!exportSet.length) return alert("Registry blank.");
+            let csv = "Date,Type,Description,Distance (km),Start SoC (%),End SoC (%),Start Fuel (%),End Fuel (%),Charged (kWh),Refueled (L),Total Cost (USD)\n";
+            exportSet.forEach(r => { csv += `${r.date},"${r.type}","${r.desc}",${r.distance},${r.startSoc},${r.endSoc},${r.startFuel},${r.endFuel},${r.kwh},${r.liters},${r.costUSD}\n`; });
+            const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+            link.download = mFilter ? `BYD_Logs_${mFilter}.csv` : "BYD_Master_Logs.csv"; link.click();
+        }
     </script>
 </body>
 </html>
