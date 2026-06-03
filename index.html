@@ -10,11 +10,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link class="app-icon" rel="apple-touch-icon" href="icon.png">
 
-    <!-- Leaflet Map Canvas Assets CDNs -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- Chart.js Data Graphing Engine CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -67,7 +65,6 @@
         [data-theme="dark"] .home-filter-input { background: rgba(255,255,255,0.1); }
         .exchange-rate-badge { font-size: 0.75rem; background: rgba(255,255,255,0.2); color: white; padding: 6px 12px; border-radius: 12px; font-weight: 500; backdrop-filter: blur(5px); }
 
-        /* Real-Time GPS Tracking Dashboard Widget Card */
         .live-tracker-card { background: var(--card-bg); border-radius: var(--card-radius); padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); border: 1px solid rgba(255,255,255,0.5); display: flex; flex-direction: column; gap: 15px; transition: all 0.3s ease; }
         [data-theme="dark"] .live-tracker-card { border: 1px solid rgba(255,255,255,0.08); }
         .live-tracker-header { display: flex; justify-content: space-between; align-items: center; }
@@ -79,12 +76,12 @@
         
         .live-tracker-action-btn { border: none; padding: 10px 18px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; color: white; background: #1F4E78; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(31,78,120,0.2); }
         .live-tracker-action-btn.stop { background: #dc3545; box-shadow: 0 4px 10px rgba(220,53,69,0.2); }
-        .live-tracker-stats-display { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; background: rgba(0,0,0,0.02); [data-theme="dark"] & { background: rgba(255,255,255,0.02); } padding: 12px; border-radius: 12px; }
+        .live-tracker-stats-display { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; background: rgba(0,0,0,0.02); padding: 12px; border-radius: 12px; }
+        [data-theme="dark"] .live-tracker-stats-display { background: rgba(255,255,255,0.02); }
         .live-stat-num { font-size: 1.4rem; font-weight: 700; color: #1F4E78; }
         [data-theme="dark"] .live-stat-num { color: #8eb3cf; }
         .live-stat-lbl { font-size: 0.7rem; color: var(--text-gray); font-weight: 600; text-transform: uppercase; }
         
-        /* Map Layout Wrap Window Frame */
         #mapWrapFrame { width: 100%; height: 200px; border-radius: 14px; overflow: hidden; border: 1px solid rgba(0,0,0,0.08); display: none; position: relative; z-index: 1; }
         #liveTrackingCanvas { width: 100%; height: 100%; }
 
@@ -190,7 +187,6 @@
 
     <div class="container">
         
-        <!-- TOP: Status Header Dashboard -->
         <div class="top-header-row">
             <div class="top-status">
                 <div class="vehicle-name" id="displayVehicleTitle">My SEALION 5 DM-i</div>
@@ -205,13 +201,11 @@
             <button class="settings-header-btn" onclick="openDrawer('settingsDrawer')">⚙️</button>
         </div>
 
-        <!-- Home Screen Filters and Exchange Rate -->
         <div class="filter-strip">
             <input type="month" id="homeMonthFilter" class="home-filter-input" onchange="updateDashboard()">
             <div id="exchangeRateBadge" class="exchange-rate-badge">Rate: 1$ = 4,000៛</div>
         </div>
 
-        <!-- NEW LIVE TRIP TRACKER CONTROLLER SYSTEM -->
         <div class="live-tracker-card" id="liveMainCard">
             <div class="live-tracker-header">
                 <div class="live-badge" id="liveBadgeUI">
@@ -221,7 +215,6 @@
                 <button class="live-tracker-action-btn" id="liveActionTriggerBtn" onclick="handleLiveTrackingRequest()">▶️ Start Trip</button>
             </div>
             
-            <!-- Live Track Info Panels -->
             <div class="live-tracker-stats-display">
                 <div>
                     <div class="live-stat-num" id="liveDistanceVal">0.00</div>
@@ -233,19 +226,16 @@
                 </div>
             </div>
 
-            <!-- Free Mapping Framework Container -->
             <div id="mapWrapFrame">
                 <div id="liveTrackingCanvas"></div>
             </div>
         </div>
 
-        <!-- Insights Summary Frame -->
         <div class="glass-card insights-panel">
             <div class="insights-title">Realized Driving Cost Efficiency</div>
             <div class="cost-per-km" id="insightCostKm">$0.00<span id="efficiencyUnitLabel"> / 100 km</span></div>
         </div>
 
-        <!-- QUICK ACTIONS GRID -->
         <div class="quick-actions">
             <button class="action-circle" onclick="openDrawer('driveDrawer')">
                 <div class="action-icon">🚗</div><div class="action-label">Drive</div>
@@ -261,7 +251,6 @@
             </button>
         </div>
 
-        <!-- HIGH FIDELITY GRAPH WITH DAY / 7-DAY INTERACTIVE TOGGLES -->
         <div class="glass-card" style="padding: 16px;">
             <div class="card-header" style="margin-bottom:12px;">
                 <span>Efficiency Trends</span>
@@ -275,13 +264,11 @@
             </div>
         </div>
 
-        <!-- EDITABLE BENCHMARK MATRIX METERS -->
         <div class="glass-card">
             <div class="card-header">EV Efficiency Benchmark</div>
             <div class="bench-stack" id="benchmarkListContainer"></div>
         </div>
 
-        <!-- MONTHLY REGISTRY STACK METRICS -->
         <div class="glass-card">
             <div class="card-header">Monthly Energy Breakdown</div>
             <div class="metrics-stack">
@@ -320,11 +307,6 @@
     <div id="toast" class="toast">Action Successful</div>
 
 
-    <!-- ======================= -->
-    <!-- SLIDING DRAWER OVERLAYS -->
-    <!-- ======================= -->
-
-    <!-- DRAWER: CONFIGURATION PANEL SETTINGS -->
     <div id="settingsDrawer" class="overlay" onclick="closeDrawer(event, 'settingsDrawer')">
         <div class="drawer" onclick="event.stopPropagation()">
             <div class="drawer-handle"></div>
@@ -370,7 +352,6 @@
         </div>
     </div>
 
-    <!-- DRAWER 1: DRIVE TRIP LOG -->
     <div id="driveDrawer" class="overlay" onclick="closeDrawer(event, 'driveDrawer')">
         <div class="drawer" onclick="event.stopPropagation()">
             <div class="drawer-handle"></div>
@@ -398,7 +379,6 @@
         </div>
     </div>
 
-    <!-- DRAWER 2: BATTERY CHARGE LOG -->
     <div id="chargeDrawer" class="overlay" onclick="closeDrawer(event, 'chargeDrawer')">
         <div class="drawer" onclick="event.stopPropagation()">
             <div class="drawer-handle"></div>
@@ -439,7 +419,6 @@
         </div>
     </div>
 
-    <!-- DRAWER 3: FUEL REFUEL LOG -->
     <div id="refuelDrawer" class="overlay" onclick="closeDrawer(event, 'refuelDrawer')">
         <div class="drawer" onclick="event.stopPropagation()">
             <div class="drawer-handle"></div>
@@ -468,7 +447,6 @@
         </div>
     </div>
 
-    <!-- DRAWER 4: LEDGER REGISTRY PANEL -->
     <div id="ledgerDrawer" class="overlay" onclick="closeDrawer(event, 'ledgerDrawer')">
         <div class="drawer" onclick="event.stopPropagation()" style="max-height:90vh;">
             <div class="drawer-handle"></div>
@@ -484,7 +462,7 @@
             <button onclick="exportCSV()" class="btn-submit" style="background:#3b74a3; margin-top:20px;">Download Excel (CSV)</button>
             <div class="form-row" style="margin-top:15px;">
                 <button onclick="backupData()" class="btn-submit" style="background:#555; margin-top:0;">Backup JSON</button>
-                <button onclick="document.getElementById('importFile').click()" class="btn-submit" style="background:#777; margin-top:0;">Restore JSON</button>
+                <button id="restoreTriggerBtn" class="btn-submit" style="background:#777; margin-top:0;">Restore JSON</button>
                 <input type="file" id="importFile" accept=".json" style="display:none;">
             </div>
             <button onclick="clearAllData()" class="btn-submit" style="background:#dc3545; margin-top:15px;">Erase Storage</button>
@@ -500,7 +478,6 @@
         let currentChartMode = 'day'; 
         let systemAnalyticsChart = null;
 
-        // GPS Engine State Map Handles
         let geoWatchID = null;
         let mapInstance = null;
         let mapRouteLine = null;
@@ -510,64 +487,53 @@
             distanceKm: 0,
             startTime: null,
             timerInterval: null,
-            lastCoords: null
+            lastCoords = null
         };
 
-        const todayObj = new Date();
-        const currentYearMonth = todayObj.getFullYear() + "-" + String(todayObj.getMonth() + 1).padStart(2, '0');
-        document.getElementById('homeMonthFilter').value = currentYearMonth;
-        document.getElementById('ledgerMonthFilter').value = currentYearMonth;
-        document.getElementById('driveDate').value = todayObj.toISOString().split('T')[0];
-        document.getElementById('chargeDate').value = todayObj.toISOString().split('T')[0];
-        document.getElementById('refuelDate').value = todayObj.toISOString().split('T')[0];
+        // --- PRE-LOAD FAILSAFE EVENT BINDINGS (EXECUTES BEFORE COMPILATION CRASH RISKS) ---
+        document.getElementById('restoreTriggerBtn').addEventListener('click', () => {
+            document.getElementById('importFile').click();
+        });
 
-        if (!localStorage.getItem('bench_t3')) localStorage.setItem('bench_t3', '13.2');
-        if (!localStorage.getItem('bench_a3')) localStorage.setItem('bench_a3', '14.9');
-        if (!localStorage.getItem('bench_nl')) localStorage.setItem('bench_nl', '15.0');
-        if (!localStorage.getItem('bench_hi')) localStorage.setItem('bench_hi', '16.5');
-        if (!localStorage.getItem('bench_p2')) localStorage.setItem('bench_p2', '17.1');
+        document.getElementById('importFile').addEventListener('change', function(event) {
+            const file = event.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) { 
+                        logs = imported; 
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+                        autoFocusLatestLogMonth(); // Immediately jumps to May 2026 window view
+                        initApp(); 
+                        document.getElementById('ledgerDrawer').style.display='none';
+                        showToast("System Restored!"); 
+                    }
+                } catch { alert("Structure mismatch."); }
+            };
+            reader.readAsText(file);
+        });
 
-        document.getElementById('benchT3').value = localStorage.getItem('bench_t3');
-        document.getElementById('benchA3').value = localStorage.getItem('bench_a3');
-        document.getElementById('benchNL').value = localStorage.getItem('bench_nl');
-        document.getElementById('benchHI').value = localStorage.getItem('bench_hi');
-        document.getElementById('benchP2').value = localStorage.getItem('bench_p2');
-
-        initApp();
-
-        function initApp() {
-            loadConfiguredSettings();
-            fetchLiveExchangeRate();
-            updateDashboard();
-            restoreInterruptedTrackingSession(); // Recalls raw journey metrics if application drops
-        }
-
-        function loadConfiguredSettings() {
-            const title = localStorage.getItem('byd_app_title') || 'My SEALION 5 DM-i';
-            const theme = localStorage.getItem('byd_app_theme') || 'light';
-            const unit = localStorage.getItem('byd_app_unit') || 'km';
-
-            document.getElementById('displayVehicleTitle').innerText = title;
-            document.documentElement.setAttribute('data-theme', theme);
-            document.getElementById('topDistUnit').innerText = unit;
-            document.getElementById('efficiencyUnitLabel').innerText = ` / 100 ${unit}`;
-            document.getElementById('formDriveDistLabel').innerHTML = `<label>Distance Driven (${unit})</label>`;
-            document.getElementById('liveUnitLabel').innerText = `Odometer (${unit})`;
-        }
-
-        function applySettings() {
-            localStorage.setItem('byd_app_title', document.getElementById('settingsTitleInput').value);
-            localStorage.setItem('byd_app_theme', document.getElementById('settingsThemeSelect').value);
-            localStorage.setItem('byd_app_unit', document.getElementById('settingsUnitSelect').value);
-            
-            localStorage.setItem('bench_t3', document.getElementById('benchT3').value);
-            localStorage.setItem('bench_a3', document.getElementById('benchA3').value);
-            localStorage.setItem('bench_nl', document.getElementById('benchNL').value);
-            localStorage.setItem('bench_hi', document.getElementById('benchHI').value);
-            localStorage.setItem('bench_p2', document.getElementById('benchP2').value);
-
-            loadConfiguredSettings();
-            updateDashboard();
+        // --- DEFENSIVE AUTO-FOCUS CALCULATOR ---
+        function autoFocusLatestLogMonth() {
+            if (logs && logs.length > 0) {
+                let validDates = logs.filter(l => l && l.date).map(l => String(l.date));
+                if (validDates.length > 0) {
+                    validDates.sort();
+                    let latestDate = validDates[validDates.length - 1];
+                    if (latestDate && latestDate.length >= 7) {
+                        let targetMonth = latestDate.substring(0, 7); // Output: YYYY-MM
+                        document.getElementById('homeMonthFilter').value = targetMonth;
+                        document.getElementById('ledgerMonthFilter').value = targetMonth;
+                        return;
+                    }
+                }
+            }
+            // Standard current date fallback
+            const tObj = new Date();
+            const yMonth = tObj.getFullYear() + "-" + String(tObj.getMonth() + 1).padStart(2, '0');
+            document.getElementById('homeMonthFilter').value = yMonth;
+            document.getElementById('ledgerMonthFilter').value = yMonth;
         }
 
         function predictConsumption() {
@@ -578,7 +544,7 @@
 
             if ((localStorage.getItem('byd_app_unit') || 'km') === 'mi') distance = distance / 0.621371;
 
-            let currentMonthLogs = logs.filter(l => l.date.startsWith(document.getElementById('homeMonthFilter').value));
+            let currentMonthLogs = logs.filter(l => l && l.date && String(l.date).startsWith(document.getElementById('homeMonthFilter').value));
             let currentStats = calculateStats(currentMonthLogs);
             let batCap = parseFloat(localStorage.getItem('byd_battery_cap')) || 18.3;
             
@@ -598,178 +564,100 @@
             }
         }
 
-        // --- CORE LIVE GPS GEOLOCATION & MAPPING TRACKER SYSTEM ---
         function handleLiveTrackingRequest() {
             if (geoWatchID === null) {
-                // Request Mode parameters prior to starting engine trace map
                 let chosenMode = confirm("Set Drive Mode: Click 'OK' for ⚡ EV Trip or 'Cancel' for ⛽ HEV Trip");
                 let activeModeString = chosenMode ? "EV Trip" : "HEV Trip";
-                
-                if (!navigator.geolocation) return alert("GPS context denied by system security policies.");
+                if (!navigator.geolocation) return alert("GPS context denied.");
                 
                 navigator.geolocation.getCurrentPosition(position => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    
-                    // Initialize Leaflet Map view context
+                    const lat = position.coords.latitude; const lon = position.coords.longitude;
                     document.getElementById('mapWrapFrame').style.display = 'block';
                     if (!mapInstance) {
                         mapInstance = L.map('liveTrackingCanvas', { zoomControl: false }).setView([lat, lon], 16);
                         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapInstance);
                         mapRouteLine = L.polyline([], { color: '#1F4E78', weight: 5 }).addTo(mapInstance);
-                    } else {
-                        mapRouteLine.setLatLngs([]);
-                        mapInstance.setView([lat, lon], 16);
-                    }
+                    } else { mapRouteLine.setLatLngs([]); mapInstance.setView([lat, lon], 16); }
 
-                    // Request Screen Awake lock to stop display sleep dropouts
                     requestScreenWakeLockHandle();
-
-                    // Start session trackers
-                    trackingSession.distanceKm = 0;
-                    trackingSession.startTime = Date.now();
-                    trackingSession.lastCoords = { lat, lon };
+                    trackingSession.distanceKm = 0; trackingSession.startTime = Date.now(); trackingSession.lastCoords = { lat, lon };
                     mapRouteLine.addLatLng([lat, lon]);
-
-                    // Boot up ticker clock loops
                     trackingSession.timerInterval = setInterval(updateLiveTrackerClock, 1000);
 
-                    // Core WatchPosition trace loop execution line
-                    geoWatchID = navigator.geolocation.watchPosition(processIncomingGpsNodes, handleGpsErrors, {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 0
-                    });
+                    geoWatchID = navigator.geolocation.watchPosition(processIncomingGpsNodes, handleGpsErrors, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
 
-                    // Cache state indicators safely to bypass reload drops
-                    let serializedCacheState = {
-                        startTime: trackingSession.startTime,
-                        lastDist: 0,
-                        mode: activeModeString,
-                        lastLat: lat,
-                        lastLon: lon
-                    };
+                    let serializedCacheState = { startTime: trackingSession.startTime, lastDist: 0, mode: activeModeString, lastLat: lat, lastLon: lon };
                     localStorage.setItem('byd_gps_session_lock', JSON.stringify(serializedCacheState));
 
                     document.getElementById('liveBadgeUI').className = "live-badge active";
                     document.getElementById('liveBadgeLabel').innerText = `Live Trace (${chosenMode ? 'EV' : 'HEV'})`;
                     document.getElementById('liveActionTriggerBtn').innerText = "⏹️ End Journey";
                     document.getElementById('liveActionTriggerBtn').className = "live-tracker-action-btn stop";
-                }, () => alert("Unable to initialize GPS mapping canvas trace coordinates."));
+                }, () => alert("GPS initialization canvas error."));
             } else {
-                // Halt trace loops execution
-                navigator.geolocation.clearWatch(geoWatchID);
-                clearInterval(trackingSession.timerInterval);
-                geoWatchID = null;
-
+                navigator.geolocation.clearWatch(geoWatchID); clearInterval(trackingSession.timerInterval); geoWatchID = null;
                 releaseScreenWakeLockHandle();
 
                 let cachedSessionLock = JSON.parse(localStorage.getItem('byd_gps_session_lock'));
                 let journeyModeStr = cachedSessionLock ? cachedSessionLock.mode : "EV Trip";
                 localStorage.removeItem('byd_gps_session_lock');
 
-                // Auto-fill driveDrawer targets directly with calculated outputs
-                const lastTrip = logs.slice().reverse().find(l => l.endSoc !== "" || l.endFuel !== "");
+                const lastTrip = logs.slice().reverse().find(l => l && l.endSoc !== "" || l.endFuel !== "");
                 document.getElementById('driveDate').value = new Date().toISOString().split('T')[0];
                 document.getElementById('driveMode').value = journeyModeStr;
                 document.getElementById('driveDesc').value = "GPS Recorded Route Path";
-                
-                let dynamicUnitVal = parseDistance(trackingSession.distanceKm);
-                document.getElementById('driveDist').value = dynamicUnitVal.toFixed(2);
+                document.getElementById('driveDist').value = parseDistance(trackingSession.distanceKm).toFixed(2);
                 document.getElementById('driveStartSoc').value = lastTrip ? lastTrip.endSoc : 100;
                 document.getElementById('driveStartFuel').value = lastTrip ? lastTrip.endFuel : 100;
 
-                // Fire prediction logic triggers immediately
                 predictConsumption();
-
-                // Reset UI layouts to default metrics displays
                 document.getElementById('mapWrapFrame').style.display = 'none';
                 document.getElementById('liveBadgeUI').className = "live-badge";
                 document.getElementById('liveBadgeLabel').innerText = "GPS Odometer Idle";
                 document.getElementById('liveActionTriggerBtn').innerText = "▶️ Start Trip";
                 document.getElementById('liveActionTriggerBtn').className = "live-tracker-action-btn";
-                document.getElementById('liveDistanceVal').innerText = "0.00";
-                document.getElementById('liveDurationVal').innerText = "00:00";
-
+                document.getElementById('liveDistanceVal').innerText = "0.00"; document.getElementById('liveDurationVal').innerText = "00:00";
                 openDrawer('driveDrawer');
             }
         }
 
-        // --- TRAFFIC DRIFT FILTER & HAVERSINE COMPUTATION BLOCKS ---
         function processIncomingGpsNodes(position) {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            const accuracy = position.coords.accuracy; // accuracy in meters
-            const speed = position.coords.speed; // speed in meters/second
-
-            if (accuracy > 25) return; // Discard imprecise data coordinates completely
-
-            // REQ 1: Phnom Penh Traffic Drift filter. Skip calculation if movement is below 2.5 km/h
+            const lat = position.coords.latitude; const lon = position.coords.longitude;
+            const accuracy = position.coords.accuracy; const speed = position.coords.speed;
+            if (accuracy > 25) return;
             if (speed !== null && speed < 0.7) return; 
 
             if (trackingSession.lastCoords) {
-                // Math computation using the Haversine equation model map
                 let stepDistance = calculateHaversineKm(trackingSession.lastCoords.lat, trackingSession.lastCoords.lon, lat, lon);
-                
-                if (stepDistance > 0.002) { // Skip adjustments smaller than 2 meters
+                if (stepDistance > 0.002) { 
                     trackingSession.distanceKm += stepDistance;
-                    
-                    let activeUnitValue = parseDistance(trackingSession.distanceKm);
-                    document.getElementById('liveDistanceVal').innerText = activeUnitValue.toFixed(2);
-                    
-                    mapRouteLine.addLatLng([lat, lon]);
-                    mapInstance.panTo([lat, lon]);
+                    document.getElementById('liveDistanceVal').innerText = parseDistance(trackingSession.distanceKm).toFixed(2);
+                    mapRouteLine.addLatLng([lat, lon]); mapInstance.panTo([lat, lon]);
 
-                    // Update local recovery states
                     let stateLock = JSON.parse(localStorage.getItem('byd_gps_session_lock'));
-                    if(stateLock) {
-                        stateLock.lastDist = trackingSession.distanceKm;
-                        stateLock.lastLat = lat; stateLock.lastLon = lon;
-                        localStorage.setItem('byd_gps_session_lock', JSON.stringify(stateLock));
-                    }
+                    if(stateLock) { stateLock.lastDist = trackingSession.distanceKm; stateLock.lastLat = lat; stateLock.lastLon = lon; localStorage.setItem('byd_gps_session_lock', JSON.stringify(stateLock)); }
                 }
             }
             trackingSession.lastCoords = { lat, lon };
         }
 
         function calculateHaversineKm(lat1, lon1, lat2, lon2) {
-            const R = 6371; 
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                      Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
+            const R = 6371; const dLat = (lat2 - lat1) * Math.PI / 180; const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
         }
 
         function updateLiveTrackerClock() {
             let diffSec = Math.floor((Date.now() - trackingSession.startTime) / 1000);
-            let m = String(Math.floor(diffSec / 60)).padStart(2, '0');
-            let s = String(diffSec % 60).padStart(2, '0');
-            document.getElementById('liveDurationVal').innerText = `${m}:${s}`;
+            document.getElementById('liveDurationVal').innerText = `${String(Math.floor(diffSec / 60)).padStart(2, '0')}:${String(diffSec % 60).padStart(2, '0')}`;
         }
 
-        function handleGpsErrors() { console.log("GPS ping dropped or timed out."); }
+        function handleGpsErrors() { console.log("GPS signal lag dropped."); }
 
-        // --- REQ 2: WAKE LOCK SCREEN POWER RECONCILE ACTIONS ---
         async function requestScreenWakeLockHandle() {
-            try {
-                if ('wakeLock' in navigator) { screenWakeLock = await navigator.wakeLock.request('screen'); }
-            } catch { console.log("System rules blocked screen lock request parameters."); }
+            try { if ('wakeLock' in navigator) { screenWakeLock = await navigator.wakeLock.request('screen'); } } catch { }
         }
-
-        function releaseScreenWakeLockHandle() {
-            if (screenWakeLock !== null) { screenWakeLock.release(); screenWakeLock = null; }
-        }
-
-        function restoreInterruptedTrackingSession() {
-            let stateLock = JSON.parse(localStorage.getItem('byd_gps_session_lock'));
-            if (stateLock) {
-                localStorage.removeItem('byd_gps_session_lock'); // Reset memory traces
-                showToast("Unfinished tracking route processed into recovery workspace.");
-            }
-        }
+        function releaseScreenWakeLockHandle() { if (screenWakeLock !== null) { screenWakeLock.release(); screenWakeLock = null; } }
 
         function fetchLiveExchangeRate() {
             fetch('https://open.er-api.com/v6/latest/USD')
@@ -780,14 +668,14 @@
                         document.getElementById('exchangeRateBadge').innerText = `Live Rate: 1$ = ${liveExchangeRate.toLocaleString()}៛`;
                         updateDashboard();
                     }
-                }).catch(() => console.log("Standard Fallback Activated."));
+                }).catch(() => console.log("Baseline exchange fallback running."));
         }
 
         function updateDashboard() {
             const homeFilterVal = document.getElementById('homeMonthFilter').value; 
             if(!homeFilterVal) return;
 
-            let currentMonthLogs = logs.filter(l => l.date.startsWith(homeFilterVal));
+            let currentMonthLogs = logs.filter(l => l && l.date && String(l.date).startsWith(homeFilterVal));
             let curr = calculateStats(currentMonthLogs);
 
             document.getElementById('topDist').innerText = parseDistance(curr.dist).toFixed(0);
@@ -798,11 +686,9 @@
 
             document.getElementById('insightTrips').innerText = curr.trips;
             document.getElementById('insightEvents').innerText = curr.energyEvents;
-            
             document.getElementById('statCost').innerText = `$${curr.walletSpent.toFixed(2)}`;
             document.getElementById('statDriveCostEv').innerText = `$${curr.evDriveCost.toFixed(2)}`;
             document.getElementById('statDriveCostHev').innerText = `$${curr.hevDriveCost.toFixed(2)}`;
-            
             document.getElementById('statKwh').innerText = curr.kwhCharged.toFixed(1);
             document.getElementById('statLiters').innerText = curr.litersRefueled.toFixed(1);
 
@@ -811,21 +697,31 @@
             document.getElementById('evPct').innerText = evPct; document.getElementById('hevPct').innerText = hevPct;
             document.getElementById('evBar').style.width = evPct + "%"; document.getElementById('hevBar').style.width = hevPct + "%";
 
+            const lastTrip = logs.slice().reverse().find(l => l && l.endSoc !== "" || l.endFuel !== "");
+            if (lastTrip) {
+                if (lastTrip.endSoc !== "") document.getElementById('topSoc').innerText = lastTrip.endSoc + "%";
+                if (lastTrip.endFuel !== "") document.getElementById('topFuel').innerText = lastTrip.endFuel + "%";
+            }
+
             renderTrendChartEngine(currentMonthLogs);
             renderBenchmarkWidget(curr.avgKwhPer100Unit);
         }
 
+        // --- BULLETPROOF TEXT ANALYSIS ENGINE (PREVENTS CRASHES) ---
         function calculateStats(dataset) {
             let dist=0, walletSpent=0, realizedDriveCost=0, evDriveCost=0, hevDriveCost=0, kwhCharged=0, litersRefueled=0, trips=0, energyEvents=0, evDist=0, hevDist=0;
             let rates = getHistoricalRates();
             let batCap = parseFloat(localStorage.getItem('byd_battery_cap')) || 18.3;
 
             dataset.forEach(l => {
+                if (!l) return;
                 let d = parseFloat(l.distance) || 0;
-                if (l.type.includes('Trip')) {
+                let typeStr = String(l.type || '');
+                
+                if (typeStr.includes('Trip')) {
                     dist += d; trips++;
-                    if (l.type === 'EV Trip') evDist += d;
-                    if (l.type === 'HEV Trip') hevDist += d;
+                    if (typeStr === 'EV Trip') evDist += d;
+                    if (typeStr === 'HEV Trip') hevDist += d;
 
                     let entryCostUSD = parseFloat(l.costUSD) || 0;
                     let tripEvCost = 0, tripHevCost = 0;
@@ -839,16 +735,16 @@
                     realizedDriveCost += entryCostUSD;
                     evDriveCost += tripEvCost;
                     hevDriveCost += tripHevCost;
-                } else if (l.type === 'Charge') {
+                } else if (typeStr === 'Charge') {
                     energyEvents++; kwhCharged += parseFloat(l.kwh) || 0; walletSpent += parseFloat(l.costUSD) || 0;
-                } else if (l.type === 'Refuel') {
+                } else if (typeStr === 'Refuel') {
                     energyEvents++; litersRefueled += parseFloat(l.liters) || 0; walletSpent += parseFloat(l.costUSD) || 0;
-                } else if (l.type === 'Carryover') {
+                } else if (typeStr === 'Carryover') {
                     dist += d; walletSpent += parseFloat(l.costUSD) || 0;
                 }
             });
 
-            let totalEvKwhConsumed = dataset.filter(l => l.type === 'EV Trip').reduce((acc, log) => {
+            let totalEvKwhConsumed = dataset.filter(l => l && String(l.type || '') === 'EV Trip').reduce((acc, log) => {
                 let diff = (parseFloat(log.startSoc) || 0) - (parseFloat(log.endSoc) || 0);
                 return acc + (diff > 0 ? (diff / 100) * batCap : 0);
             }, 0);
@@ -874,8 +770,8 @@
             const currentUnit = localStorage.getItem('byd_app_unit') || 'km';
 
             if (currentChartMode === 'day') {
-                let lastEntries = monthLogs.filter(l => l.type.includes('Trip')).slice(-5);
-                labels = lastEntries.map(l => l.desc.substring(0, 10));
+                let lastEntries = monthLogs.filter(l => l && String(l.type || '').includes('Trip')).slice(-5);
+                labels = lastEntries.map(l => String(l.desc || 'Trip').substring(0, 10));
                 
                 lastEntries.forEach(l => {
                     let d = parseDistance(parseFloat(l.distance) || 0);
@@ -894,7 +790,7 @@
                     let dStr = dTarget.toISOString().split('T')[0];
                     labels.push(dTarget.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' }));
 
-                    let dayLogs = logs.filter(l => l.date === dStr && l.type.includes('Trip'));
+                    let dayLogs = logs.filter(l => l && l.date === dStr && String(l.type || '').includes('Trip'));
                     let dayDist = dayLogs.reduce((acc, l) => acc + parseDistance(parseFloat(l.distance) || 0), 0);
                     
                     let dayKwh = dayLogs.reduce((acc, l) => {
@@ -937,8 +833,7 @@
 
         function renderBenchmarkWidget(userAverageKwh = 0) {
             const container = document.getElementById('benchmarkListContainer');
-            container.innerHTML = '';
-            const currentUnit = localStorage.getItem('byd_app_unit') || 'km';
+            container.innerHTML = ''; const currentUnit = localStorage.getItem('byd_app_unit') || 'km';
 
             let dynamicBenchmarks = [
                 { name: "My Sealion 5 (Pure EV Mode)", kwh: userAverageKwh || 15.5, isUser: true, max: 22 },
@@ -967,32 +862,30 @@
 
         function renderLedger() {
             const listContainer = document.getElementById('ledgerTimelineList');
-            listContainer.innerHTML = '';
-            const monthFilter = document.getElementById('ledgerMonthFilter').value; 
-            
-            let rates = getHistoricalRates();
-            let batCap = parseFloat(localStorage.getItem('byd_battery_cap')) || 18.3;
+            listContainer.innerHTML = ''; const monthFilter = document.getElementById('ledgerMonthFilter').value; 
+            let rates = getHistoricalRates(); let batCap = parseFloat(localStorage.getItem('byd_battery_cap')) || 18.3;
             let currentUnit = localStorage.getItem('byd_app_unit') || 'km';
 
             let chronologicalLogs = logs.map((log, index) => ({ ...log, originalIndex: index }));
             chronologicalLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             chronologicalLogs.forEach((log) => {
-                if (monthFilter && !log.date.startsWith(monthFilter)) return;
+                if (!log) return;
+                if (monthFilter && (!log.date || !String(log.date).startsWith(monthFilter))) return;
 
                 let metricInfo = '';
                 if (log.distance > 0) metricInfo = `<div>📍 <b>${parseDistance(log.distance).toFixed(1)} ${currentUnit}</b></div>`;
                 if (log.kwh) metricInfo += `<div>⚡ <b>${parseFloat(log.kwh).toFixed(2)} kWh</b></div>`;
-                if (log.liters) metricInfo += `<div>¼ <b>${parseFloat(log.liters).toFixed(2)} L</b></div>`;
+                if (log.liters) metricInfo += `<div>⛽ <b>${parseFloat(log.liters).toFixed(2)} L</b></div>`;
 
                 let socInfo = '';
                 if (log.startSoc && log.endSoc) socInfo = `<div>📉 Pack: ${log.startSoc}% → ${log.endSoc}%</div>`;
                 if (log.startFuel && log.endFuel) socInfo += `<div>💧 Fuel: ${log.startFuel}% → ${log.endFuel}%</div>`;
 
-                let costUSD = parseFloat(log.costUSD) || 0;
-                let costKHR = parseInt(log.costKHR) || 0;
+                let costUSD = parseFloat(log.costUSD) || 0; let costKHR = parseInt(log.costKHR) || 0;
+                let typeStr = String(log.type || '');
                 
-                if(log.type.includes('Trip') && costUSD === 0) {
+                if(typeStr.includes('Trip') && costUSD === 0) {
                     let sSoc = parseFloat(log.startSoc), eSoc = parseFloat(log.endSoc);
                     let sFl = parseFloat(log.startFuel), eFl = parseFloat(log.endFuel);
                     let tempKHR = 0;
@@ -1006,10 +899,10 @@
                 let cardHTML = `
                     <div class="ledger-item-card">
                         <div class="ledger-card-top">
-                            <span class="ledger-card-title">${log.type.includes('Trip') ? '🚗' : (log.type === 'Charge' ? '⚡' : '⛽')} ${log.type}</span>
-                            <span class="ledger-card-date">${log.date}</span>
+                            <span class="ledger-card-title">${typeStr.includes('Trip') ? '🚗' : (typeStr === 'Charge' ? '⚡' : '⛽')} ${typeStr}</span>
+                            <span class="ledger-card-date">${log.date || ''}</span>
                         </div>
-                        <div class="ledger-card-desc"><b>Details:</b> ${log.desc}</div>
+                        <div class="ledger-card-desc"><b>Details:</b> ${log.desc || ''}</div>
                         <div class="ledger-card-metrics">${metricInfo}${socInfo}</div>
                         <div class="ledger-card-bottom">
                             <span class="ledger-card-price">${costOutput}</span>
@@ -1024,144 +917,41 @@
         }
 
         function initiateEdit(index) {
-            editingIndex = index;
-            const record = logs[index];
-            document.getElementById('ledgerDrawer').style.display = 'none'; 
+            editingIndex = index; const record = logs[index]; document.getElementById('ledgerDrawer').style.display = 'none'; 
+            let typeStr = String(record.type || '');
 
-            if(record.type.includes('Trip') || record.type === 'Idle') {
-                document.getElementById('driveDate').value = record.date;
-                document.getElementById('driveMode').value = record.type;
-                document.getElementById('driveDesc').value = record.desc;
-                document.getElementById('driveDist').value = parseDistance(record.distance).toFixed(1);
-                document.getElementById('driveStartSoc').value = record.startSoc;
-                document.getElementById('driveEndSoc').value = record.endSoc;
-                document.getElementById('driveStartFuel').value = record.startFuel;
-                document.getElementById('driveEndFuel').value = record.endFuel;
-                
-                document.getElementById('driveSubmitBtn').innerText = "Update Trip";
-                document.getElementById('driveDrawerTitle').innerText = "✏️ Edit Drive Trip";
+            if(typeStr.includes('Trip') || typeStr === 'Idle') {
+                document.getElementById('driveDate').value = record.date; document.getElementById('driveMode').value = record.type;
+                document.getElementById('driveDesc').value = record.desc; document.getElementById('driveDist').value = parseDistance(record.distance).toFixed(1);
+                document.getElementById('driveStartSoc').value = record.startSoc; document.getElementById('driveEndSoc').value = record.endSoc;
+                document.getElementById('driveStartFuel').value = record.startFuel; document.getElementById('driveEndFuel').value = record.endFuel;
+                document.getElementById('driveSubmitBtn').innerText = "Update Trip"; document.getElementById('driveDrawerTitle').innerText = "✏️ Edit Drive Trip";
                 openDrawer('driveDrawer');
             } 
-            else if(record.type === 'Charge') {
-                document.getElementById('chargeDate').value = record.date;
-                document.getElementById('chargeDesc').value = record.desc;
-                document.getElementById('chargeStart').value = record.startSoc;
-                document.getElementById('chargeEnd').value = record.endSoc;
-                document.getElementById('energyKwh').value = record.kwh;
-                document.getElementById('rateElecInput').value = record.kwh ? Math.round(record.costKHR / record.kwh) : '';
-                calcChargeCost();
-
-                document.getElementById('chargeSubmitBtn').innerText = "Update Charge";
-                document.getElementById('chargeDrawerTitle').innerText = "✏️ Edit Charge Log";
-                openDrawer('chargeDrawer');
+            else if(typeStr === 'Charge') {
+                document.getElementById('chargeDate').value = record.date; document.getElementById('chargeDesc').value = record.desc;
+                document.getElementById('chargeStart').value = record.startSoc; document.getElementById('chargeEnd').value = record.endSoc;
+                document.getElementById('energyKwh').value = record.kwh; document.getElementById('rateElecInput').value = record.kwh ? Math.round(record.costKHR / record.kwh) : '';
+                calcChargeCost(); document.getElementById('chargeSubmitBtn').innerText = "Update Charge";
+                document.getElementById('chargeDrawerTitle').innerText = "✏️ Edit Charge Log"; openDrawer('chargeDrawer');
             }
-            else if(record.type === 'Refuel') {
-                document.getElementById('refuelDate').value = record.date;
-                document.getElementById('refuelDesc').value = record.desc;
-                document.getElementById('energyLiters').value = record.liters;
-                document.getElementById('rateFuelInput').value = record.liters ? Math.round(record.costKHR / record.liters) : '';
-                calcRefuelCost();
-
-                document.getElementById('refuelSubmitBtn').innerText = "Update Refuel";
-                document.getElementById('refuelDrawerTitle').innerText = "✏️ Edit Refuel Log";
-                openDrawer('refuelDrawer');
+            else if(typeStr === 'Refuel') {
+                document.getElementById('refuelDate').value = record.date; document.getElementById('refuelDesc').value = record.desc;
+                document.getElementById('energyLiters').value = record.liters; document.getElementById('rateFuelInput').value = record.liters ? Math.round(record.costKHR / record.liters) : '';
+                calcRefuelCost(); document.getElementById('refuelSubmitBtn').innerText = "Update Refuel";
+                document.getElementById('refuelDrawerTitle').innerText = "✏️ Edit Refuel Log"; openDrawer('refuelDrawer');
             }
-        }
-
-        function openDrawer(id) {
-            if (id === 'driveDrawer' && editingIndex === null) {
-                const lastTrip = logs.slice().reverse().find(l => l.endSoc !== "" || l.endFuel !== "");
-                document.getElementById('driveStartSoc').value = lastTrip ? lastTrip.endSoc : 100;
-                document.getElementById('driveStartFuel').value = lastTrip ? lastTrip.endFuel : 100;
-                document.getElementById('driveDate').value = new Date().toISOString().split('T')[0];
-            } else if (id === 'chargeDrawer' && editingIndex === null) {
-                document.getElementById('rateElecInput').value = getHistoricalRates().elecRate;
-                document.getElementById('chargeDate').value = new Date().toISOString().split('T')[0];
-            } else if (id === 'refuelDrawer' && editingIndex === null) {
-                document.getElementById('rateFuelInput').value = getHistoricalRates().fuelRate;
-                document.getElementById('refuelDate').value = new Date().toISOString().split('T')[0];
-            }
-            document.getElementById(id).style.display = 'flex';
         }
 
         function closeFormDrawer(id) { document.getElementById(id).style.display = 'none'; editingIndex = null; }
         function closeDrawer(event, id) { if (event.target.className === 'overlay') closeFormDrawer(id); }
 
-        function estimateKwh() {
-            let start = parseFloat(document.getElementById('chargeStart').value) || 0;
-            let end = parseFloat(document.getElementById('chargeEnd').value) || 0;
-            let cap = parseFloat(document.getElementById('batteryCap').value) || 18.3;
-            if (end > start) {
-                document.getElementById('energyKwh').value = (((end - start) / 100) * cap).toFixed(2);
-                calcChargeCost();
-            } else { alert("End SoC must exceed Start SoC."); }
+        function initApp() {
+            loadConfiguredSettings();
+            fetchLiveExchangeRate();
+            autoFocusLatestLogMonth(); // Evaluates newest log bounds
+            updateDashboard();
         }
-
-        function calcChargeCost() {
-            let kwh = parseFloat(document.getElementById('energyKwh').value) || 0;
-            let rate = parseFloat(document.getElementById('rateElecInput').value) || 0;
-            let khr = kwh * rate;
-            document.getElementById('chargeCostKHR').value = Math.round(khr).toLocaleString() + " ៛";
-            document.getElementById('chargeCostUSD').value = "$" + (khr / liveExchangeRate).toFixed(2);
-        }
-
-        function calcRefuelCost() {
-            let liters = parseFloat(document.getElementById('energyLiters').value) || 0;
-            let rate = parseFloat(document.getElementById('rateFuelInput').value) || 0;
-            let khr = liters * rate;
-            document.getElementById('refuelCostKHR').value = Math.round(khr).toLocaleString() + " ៛";
-            document.getElementById('refuelCostUSD').value = "$" + (khr / liveExchangeRate).toFixed(2);
-        }
-
-        document.getElementById('driveForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            let startSoc = parseFloat(document.getElementById('driveStartSoc').value) || 0;
-            let endSoc = parseFloat(document.getElementById('driveEndSoc').value) || 0;
-            let startFuel = parseFloat(document.getElementById('driveStartFuel').value) || 0;
-            let endFuel = parseFloat(document.getElementById('driveEndFuel').value) || 0;
-            
-            let rates = getHistoricalRates();
-            let batteryCapacity = parseFloat(localStorage.getItem('byd_battery_cap')) || 18.3;
-            let calcCostKHR = 0, consumedKwh = 0, consumedLiters = 0;
-            
-            if (startSoc > endSoc) { consumedKwh = ((startSoc - endSoc) / 100) * batteryCapacity; calcCostKHR += consumedKwh * rates.elecRate; }
-            if (startFuel > endFuel) { consumedLiters = ((startFuel - endFuel) / 100) * 60; calcCostKHR += consumedLiters * rates.fuelRate; }
-
-            let rawDistanceInput = parseFloat(document.getElementById('driveDist').value) || 0;
-            if((localStorage.getItem('byd_app_unit') || 'km') === 'mi') { rawDistanceInput = rawDistanceInput / 0.621371; }
-            let calcCostUSD = calcCostKHR > 0 ? (calcCostKHR / liveExchangeRate).toFixed(2) : 0;
-
-            const entry = {
-                date: document.getElementById('driveDate').value, type: document.getElementById('driveMode').value, desc: document.getElementById('driveDesc').value,
-                distance: parseFloat(rawDistanceInput.toFixed(2)), startSoc: startSoc, endSoc: endSoc, startFuel: startFuel, endFuel: endFuel,
-                kwh: consumedKwh > 0 ? consumedKwh.toFixed(2) : '', liters: consumedLiters > 0 ? consumedLiters.toFixed(2) : '', 
-                costKHR: Math.round(calcCostKHR), costUSD: parseFloat(calcCostUSD)
-            };
-            commitSave(entry, this, 'driveDrawer');
-        });
-
-        document.getElementById('chargeForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            let khrVal = parseInt(document.getElementById('chargeCostKHR').value.replace(/[^0-9]/g, '')) || 0;
-            const entry = {
-                date: document.getElementById('chargeDate').value, type: 'Charge', desc: document.getElementById('chargeDesc').value, distance: 0,
-                startSoc: document.getElementById('chargeStart').value, endSoc: document.getElementById('chargeEnd').value, startFuel: '', endFuel: '',
-                kwh: parseFloat(document.getElementById('energyKwh').value) || '', liters: '',
-                costKHR: khrVal, costUSD: khrVal > 0 ? (khrVal / liveExchangeRate).toFixed(2) : 0
-            };
-            commitSave(entry, this, 'chargeDrawer');
-        });
-
-        document.getElementById('refuelForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            let khrVal = parseInt(document.getElementById('refuelCostKHR').value.replace(/[^0-9]/g, '')) || 0;
-            const entry = {
-                date: document.getElementById('refuelDate').value, type: 'Refuel', desc: document.getElementById('refuelDesc').value, distance: 0,
-                startSoc: '', endSoc: '', startFuel: '', endFuel: '', kwh: '', liters: parseFloat(document.getElementById('energyLiters').value) || '',
-                costKHR: khrVal, costUSD: khrVal > 0 ? (khrVal / liveExchangeRate).toFixed(2) : 0
-            };
-            commitSave(entry, this, 'refuelDrawer');
-        });
 
         function commitSave(entry, formObj, drawerId) {
             if (editingIndex !== null) { logs[editingIndex] = entry; showToast("Entry Updated!"); } 
@@ -1171,18 +961,8 @@
             if(document.getElementById('ledgerDrawer').style.display === 'flex') renderLedger();
         }
 
-        function deleteLog(i) { if(confirm("Erase record row?")) { logs.splice(i, 1); localStorage.setItem(STORAGE_KEY, JSON.stringify(logs)); initApp(); renderLedger(); showToast("Record Erased"); } }
-        function clearAllData() { if(confirm("Format system registry storage completely?")) { logs = []; localStorage.removeItem(STORAGE_KEY); initApp(); document.getElementById('ledgerDrawer').style.display='none'; showToast("System Formatted"); } }
-        
-        function exportCSV() {
-            const mFilter = document.getElementById('ledgerMonthFilter').value;
-            let exportSet = mFilter ? logs.filter(l => l.date.startsWith(mFilter)) : logs;
-            if(!exportSet.length) return alert("Registry blank.");
-            let csv = "Date,Type,Description,Distance (km),Start SoC (%),End SoC (%),Start Fuel (%),End Fuel (%),Charged (kWh),Refueled (L),Total Cost (USD)\n";
-            exportSet.forEach(r => { csv += `${r.date},"${r.type}","${r.desc}",${r.distance},${r.startSoc},${r.endSoc},${r.startFuel},${r.endFuel},${r.kwh},${r.liters},${r.costUSD}\n`; });
-            const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-            link.download = mFilter ? `BYD_Logs_${mFilter}.csv` : "BYD_Master_Logs.csv"; link.click();
-        }
+        function deleteLog(i) { if(confirm("Erase line record?")) { logs.splice(i, 1); localStorage.setItem(STORAGE_KEY, JSON.stringify(logs)); initApp(); renderLedger(); showToast("Record Deleted"); } }
+        function clearAllData() { if(confirm("Clear log completely?")) { logs = []; localStorage.removeItem(STORAGE_KEY); initApp(); document.getElementById('ledgerDrawer').style.display='none'; showToast("Storage Formatted"); } }
     </script>
 </body>
 </html>
