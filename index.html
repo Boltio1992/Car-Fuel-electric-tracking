@@ -70,16 +70,16 @@
         /* Real-Time GPS Tracking Card Layout */
         .live-tracker-card { background: var(--card-bg); border-radius: var(--card-radius); padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); border: 1px solid rgba(255,255,255,0.5); display: flex; flex-direction: column; gap: 15px; transition: all 0.3s ease; }
         [data-theme="dark"] .live-tracker-card { border: 1px solid rgba(255,255,255,0.08); }
-        .live-tracker-header { display: flex; justify-content: space-between; align-items: center; }
+        .live-tracker-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
         
-        /* Shorter alignment styles for badge */
-        .live-badge { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.3px; }
+        /* Fixed and cleaned badge alignment structure */
+        .live-badge { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap; flex-shrink: 0; }
         .live-badge.active { color: #dc3545; }
-        .live-pulse-dot { width: 8px; height: 8px; background: #666; border-radius: 50%; }
+        .live-pulse-dot { width: 8px; height: 8px; background: #666; border-radius: 50%; flex-shrink: 0; }
         .live-badge.active .live-pulse-dot { background: #dc3545; animation: pulseGlow 1.5s infinite alternate; }
         @keyframes pulseGlow { from { opacity: 0.3; transform: scale(0.9); } to { opacity: 1; transform: scale(1.2); } }
         
-        .live-tracker-action-btn { border: none; padding: 10px 18px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; color: white; background: #1F4E78; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(31,78,120,0.2); }
+        .live-tracker-action-btn { border: none; padding: 10px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; color: white; background: #1F4E78; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(31,78,120,0.2); white-space: nowrap; }
         .live-tracker-action-btn.stop { background: #dc3545; box-shadow: 0 4px 10px rgba(220,53,69,0.2); }
         
         .live-tracker-stats-display { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center; background: rgba(0,0,0,0.02); padding: 12px; border-radius: 12px; }
@@ -219,7 +219,6 @@
             <div class="live-tracker-header">
                 <div class="live-badge" id="liveBadgeUI">
                     <div class="live-pulse-dot"></div>
-                    <!-- Shortened to stop mobile text alignment dropping -->
                     <span id="liveBadgeLabel">GPS Idle</span>
                 </div>
                 <button class="live-tracker-action-btn" id="liveActionTriggerBtn" onclick="handleLiveTrackingRequest()">▶️ Start Trip</button>
@@ -507,7 +506,6 @@
         let mapRouteLine = null;
         let screenWakeLock = null;
         
-        // FIX: Replaced syntax error (=) with safe object initializer (:)
         let trackingSession = {
             distanceKm: 0,
             startTime: null,
@@ -515,7 +513,7 @@
             lastCoords: null
         };
 
-        // --- FAILSAFE INTERACTIVE EVENT LISTENERS ---
+        // --- FIXED SAFE GLOBAL INITIALIZER BLOCK ---
         document.getElementById('restoreTriggerBtn').addEventListener('click', () => {
             document.getElementById('importFile').click();
         });
@@ -529,12 +527,11 @@
                     if (Array.isArray(imported)) { 
                         logs = imported; 
                         localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
-                        autoFocusLatestLogMonth(); 
                         initApp(); 
                         document.getElementById('ledgerDrawer').style.display='none';
                         showToast("System Restored!"); 
                     }
-                } catch { alert("Structure mismatch."); }
+                } catch(err) { alert("Structure mismatch or corrupt backup."); }
             };
             reader.readAsText(file);
         });
@@ -587,6 +584,7 @@
             }
         }
 
+        // --- FIXED ARRANGEMENTS FOR LIVE TRACKING SEARCH QUERY CRASHES ---
         function handleLiveTrackingRequest() {
             if (geoWatchID === null) {
                 let chosenMode = confirm("Set Drive Mode: Click 'OK' for ⚡ EV Trip or 'Cancel' for ⛽ HEV Trip");
@@ -625,7 +623,9 @@
                 let journeyModeStr = cachedSessionLock ? cachedSessionLock.mode : "EV Trip";
                 localStorage.removeItem('byd_gps_session_lock');
 
-                const lastTrip = logs.slice().reverse().find(l => l && l.endSoc !== "" || l.endFuel !== "");
+                // FIXED PREDICATE PRECEDENCE GROUPINGS (PREVENTS TYPEERRORS COMPLETELY)
+                const lastTrip = logs.slice().reverse().find(l => l && (l.endSoc !== "" || l.endFuel !== ""));
+                
                 document.getElementById('driveDate').value = new Date().toISOString().split('T')[0];
                 document.getElementById('driveMode').value = journeyModeStr;
                 document.getElementById('driveDesc').value = "GPS Recorded Route Path";
@@ -675,10 +675,10 @@
             document.getElementById('liveDurationVal').innerText = `${String(Math.floor(diffSec / 60)).padStart(2, '0')}:${String(diffSec % 60).padStart(2, '0')}`;
         }
 
-        function handleGpsErrors() { console.log("GPS signal lag dropped."); }
+        function handleGpsErrors() { console.log("GPS ping dropped."); }
 
         async function requestScreenWakeLockHandle() {
-            try { if ('wakeLock' in navigator) { screenWakeLock = await navigator.wakeLock.request('screen'); } } catch { }
+            try { if ('wakeLock' in navigator) { screenWakeLock = await navigator.wakeLock.request('screen'); } } catch(e) { }
         }
         function releaseScreenWakeLockHandle() { if (screenWakeLock !== null) { screenWakeLock.release(); screenWakeLock = null; } }
 
@@ -692,6 +692,19 @@
                         updateDashboard();
                     }
                 }).catch(() => console.log("Baseline exchange fallback running."));
+        }
+
+        function loadConfiguredSettings() {
+            const title = localStorage.getItem('byd_app_title') || 'My SEALION 5 DM-i';
+            const theme = localStorage.getItem('byd_app_theme') || 'light';
+            const unit = localStorage.getItem('byd_app_unit') || 'km';
+
+            document.getElementById('displayVehicleTitle').innerText = title;
+            document.documentElement.setAttribute('data-theme', theme);
+            document.getElementById('topDistUnit').innerText = unit;
+            document.getElementById('efficiencyUnitLabel').innerText = ` / 100 ${unit}`;
+            document.getElementById('formDriveDistLabel').innerHTML = `<label>Distance Driven (${unit})</label>`;
+            document.getElementById('liveUnitLabel').innerText = `Odometer (${unit})`;
         }
 
         function updateDashboard() {
@@ -720,7 +733,8 @@
             document.getElementById('evPct').innerText = evPct; document.getElementById('hevPct').innerText = fontHevPct;
             document.getElementById('evBar').style.width = evPct + "%"; document.getElementById('hevBar').style.width = fontHevPct + "%";
 
-            const lastTrip = logs.slice().reverse().find(l => l && l.endSoc !== "" || l.endFuel !== "");
+            // FIXED PREDICATE PRECECDENCE GROUPING FOR HOME VIEW
+            const lastTrip = logs.slice().reverse().find(l => l && (l.endSoc !== "" || l.endFuel !== ""));
             if (lastTrip) {
                 if (lastTrip.endSoc !== "") document.getElementById('topSoc').innerText = lastTrip.endSoc + "%";
                 if (lastTrip.endFuel !== "") document.getElementById('topFuel').innerText = lastTrip.endFuel + "%";
@@ -967,7 +981,7 @@
 
         function openDrawer(id) {
             if (id === 'driveDrawer' && editingIndex === null) {
-                const lastTrip = logs.slice().reverse().find(l => l && l.endSoc !== "" || l.endFuel !== "");
+                const lastTrip = logs.slice().reverse().find(l => l && (l.endSoc !== "" || l.endFuel !== ""));
                 document.getElementById('driveStartSoc').value = lastTrip ? lastTrip.endSoc : 100;
                 document.getElementById('driveStartFuel').value = lastTrip ? lastTrip.endFuel : 100;
                 document.getElementById('driveDate').value = new Date().toISOString().split('T')[0];
@@ -1008,6 +1022,22 @@
             let khr = liters * rate;
             document.getElementById('refuelCostKHR').value = Math.round(khr).toLocaleString() + " ៛";
             document.getElementById('refuelCostUSD').value = "$" + (khr / liveExchangeRate).toFixed(2);
+        }
+
+        // --- SAFE CONSOLIDATED APPLICATION RUNTIME INITIALIZER ---
+        function initApp() {
+            loadConfiguredSettings();
+            fetchLiveExchangeRate();
+            autoFocusLatestLogMonth(); 
+            updateDashboard();
+        }
+
+        function commitSave(entry, formObj, drawerId) {
+            if (editingIndex !== null) { logs[editingIndex] = entry; showToast("Entry Updated!"); } 
+            else { logs.push(entry); showToast("Entry Saved!"); }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+            formObj.reset(); closeFormDrawer(drawerId); initApp();
+            if(document.getElementById('ledgerDrawer').style.display === 'flex') renderLedger();
         }
 
         document.getElementById('driveForm').addEventListener('submit', function(e) {
@@ -1059,21 +1089,6 @@
             };
             commitSave(entry, this, 'refuelDrawer');
         });
-
-        function commitSave(entry, formObj, drawerId) {
-            if (editingIndex !== null) { logs[editingIndex] = entry; showToast("Entry Updated!"); } 
-            else { logs.push(entry); showToast("Entry Saved!"); }
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
-            formObj.reset(); closeFormDrawer(drawerId); initApp();
-            if(document.getElementById('ledgerDrawer').style.display === 'flex') renderLedger();
-        }
-
-        function initApp() {
-            loadConfiguredSettings();
-            fetchLiveExchangeRate();
-            autoFocusLatestLogMonth(); 
-            updateDashboard();
-        }
 
         function deleteLog(i) { if(confirm("Erase line record?")) { logs.splice(i, 1); localStorage.setItem(STORAGE_KEY, JSON.stringify(logs)); initApp(); renderLedger(); showToast("Record Deleted"); } }
         function clearAllData() { if(confirm("Clear log completely?")) { logs = []; localStorage.removeItem(STORAGE_KEY); initApp(); document.getElementById('ledgerDrawer').style.display='none'; showToast("Storage Formatted"); } }
